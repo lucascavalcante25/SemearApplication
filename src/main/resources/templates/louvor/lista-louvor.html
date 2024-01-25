@@ -12,6 +12,12 @@
 	integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
 	crossorigin="anonymous">
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 <title>| App Semear |</title>
 </head>
 <body>
@@ -36,49 +42,90 @@
 		</nav>
 	</header>
 	<div class="container">
-		<br> <br>
+		<br>
 		<div class="row">
 			<div class="col">
 				<div class="card-body">
-					<button type="button" class="btn btn-success" id="btnCadastrar">Cadastrar Louvor</button>
+					<button type="button" class="btn btn-success" id="btnCadastrar">
+						<i class="fas fa-list"></i> Novo
+					</button>
 					<div id="formularioContainer" style="display: none;">
 						<div class="container">
-							<th:block th:include="mensagem-validacao"></th:block>
-							<form method="post" th:action="@{/cadastrarLouvor}">
-								<div class="form-group">
-									<label for=""><b>Nome:</b> </label> <input type="text" class="form-control" value=""
-										placeholder="Insira o nome do louvor" name="nome" required> <small
-										class="form-text text-muted"></small>
-								</div>
-								<div class="row">
-									<div class="col">
+							<div class="row">
+								<div class="col">
+									<div class="card-header card-title">
+										<h3>Cadastrar Louvor</h3>
+									</div>
+									<th:block th:include="mensagem-validacao"></th:block>
+									<form method="post" th:action="@{/cadastrarLouvor}">
 										<div class="form-group">
-											<label for=""><b>Artista/Grupo</b></label> <input type="text" value="" name="artista"
-												class="form-control" required /> <small class="form-text text-muted"></small>
+											<label for=""><b>Nome:</b> </label> <input type="text" class="form-control" value=""
+												placeholder="Título do louvor" name="nome" required> <small
+												class="form-text text-muted"></small>
 										</div>
-									</div>
-									<div class="col">
-										<label for=""><b>Tonalidade</b> </label> <input type="text" value="" name="tonalidade"
-											class="form-control" placeholder="exemplo: G ou D#" required />
-									</div>
-								</div>
-								<div class="row">
-									<div class="col">
-										<div class="form-group">
-											<label for=""><b>Andamento</b></label> <input type="number" value="" name="andamento"
-												class="form-control" required /> <small class="form-text text-muted"><i>*
-													BPM</i></small>
+										<div class="row">
+											<div class="col">
+												<div class="form-group">
+													<label for=""><b>Artista/Grupo</b></label> <input type="text" value="" name="artista"
+														class="form-control" placeholder="Exempo: Vineyard" /> <small
+														class="form-text text-muted"></small>
+												</div>
+											</div>
+											<div class="col">
+												<label for=""><b>Tonalidade</b> </label> <input type="text" value="" name="tonalidade"
+													class="form-control" placeholder="Exemplo: G ou D#" required />
+											</div>
+											<div class="col">
+												<div class="form-group">
+													<label><b>Tipo de Louvor</b></label><br>
+													<div class="form-check form-check-inline"
+														th:each="tipoLouvor : ${T(com.semearApp.semearApp.enums.TipoLouvorEnum).values()}">
+														<input class="form-check-input" type="checkbox"
+															th:id="${'tipoLouvor-' + tipoLouvor.id}" th:value="${tipoLouvor}"
+															name="tipoLouvorEnum"> <label class="form-check-label"
+															th:for="${'tipoLouvor-' + tipoLouvor.id}" th:text="${tipoLouvor.descricao}"></label>
+													</div>
+												</div>
+											</div>
+
 										</div>
-									</div>
-									<div class="col">
-										<label for=""><b>Link da versão</b> </label> <input type="text" value="" name="linkVersao"
-											class="form-control" required />
-									</div>
+										<div class="row">
+											<div class="col">
+												<div class="form-group">
+													<label for=""><b>Andamento</b></label> <input type="number" value="" name="andamento"
+														class="form-control" placeholder="Numérico" /> <small class="form-text text-muted"><i>*
+															BPM</i></small>
+												</div>
+											</div>
+											<div class="col">
+												<label for=""><b>Link da versão</b> </label> <input type="text" value=""
+													name="linkVersao" class="form-control" placeholder="Link do Youtube" />
+											</div>
+										</div>
+										<div class="row">
+											<div class="col">
+												<div class="form-check">
+													<input type="checkbox" class="form-check-input" name="ativo" id="ativoCheckbox">
+													<label class="form-check-label" for="ativoCheckbox"><b>Ativo</b></label>
+												</div>
+											</div>
+										</div>
+										<br>
+										<button type="submit" class="btn btn-success">
+											<i class="fas fa-save"></i> Salvar
+										</button>
+
+										<button id="btnSairCadastro" type="button" class="btn btn-warning">
+											<i class="fas fa-sign-out-alt"></i> Sair
+										</button>
+
+									</form>
 								</div>
-								<button type="submit" class="btn btn-success">Adicionar Louvor</button>
-							</form>
+							</div>
 						</div>
 					</div>
+					<br> <br> <input class="form-control" id="myInput" type="text"
+						placeholder="Buscar louvor na lista...">
 				</div>
 			</div>
 			<div style="height: 100px;"></div>
@@ -89,43 +136,53 @@
 							<div class="card-header card-title">
 								<h3>Lista de Louvores</h3>
 							</div>
-							<table id="tabelaLouvores" class="table table-hover table-responsive w-auto table-striped">
-								<thead>
-									<tr>
-										<th scope="col">Nome</th>
-										<th scope="col">Artista</th>
-										<th scope="col">Tonalidade</th>
-										<th scope="col">Andamento</th>
-										<th scope="col">Link da versão</th>
-										<th scope="col">Ações</th>
-										<th scope="col"></th>
-
-									</tr>
-								</thead>
-								<tbody>
-									<tr th:each="louvor : ${louvor}">
-
-										<td><span th:text="${louvor.nome}"></span></td>
-										<td><span th:text="${louvor.artista}"></span></td>
-										<td><span th:text="${louvor.tonalidade}"></span></td>
-										<td><span th:text="${louvor.andamento}"></span></td>
-										<td><span th:text="${louvor.linkVersao}"></span></td>
-
-										<td><a th:href="@{/deletarLouvor(id=${louvor.id})}"
-											class="waves-effect waves-light btn-small">
-												<button type="button" class="btn btn-danger">Excluir</button>
-										</a></td>
-										<td><a th:href="@{/editar-louvor(id=${louvor.id})}">
-												<button type="button" class="btn btn-primary">Editar</button>
-										</a></td>
-									</tr>
-								</tbody>
-
-							</table>
+							<div class="table-responsive">
+								<table id="tabelaLouvores" class="table table-striped">
+									<thead>
+										<tr>
+											<th scope="col" style="width: 20%;">Nome</th>
+											<th scope="col" style="width: 15%;">Artista</th>
+											<th scope="col" style="width: 5%;">Tonalidade</th>
+											<th scope="col" style="width: 5%;">Andamento</th>
+											<th scope="col" style="width: 20%;">Tipo de Louvor</th>
+											<th scope="col" style="width: 5%;">Ativo</th>
+											<th scope="col" style="width: 15%;">Link da versão</th>
+											<th scope="col" style="width: 5%;">Ações</th>
+											<!-- 											<th scope="col" style="width: 0%;"></th> -->
+											<!-- Coluna vazia para espaçamento -->
+										</tr>
+									</thead>
+									<tbody id="myTable">
+										<tr th:each="louvor : ${louvor}">
+											<td><span th:text="${louvor.nome}"></span></td>
+											<td><span th:text="${louvor.artista}"></span></td>
+											<td><span th:text="${louvor.tonalidade}"></span></td>
+											<td><span th:text="${louvor.andamento}"></span></td>
+											<td><span th:if="${louvor.tipoLouvorEnum != null}"> <span
+													th:each="tipoLouvor, iterStat : ${louvor.tipoLouvorEnum}"> <span
+														th:text="${tipoLouvor.descricao}"></span> <span
+														th:if="${iterStat.index + 1 < louvor.tipoLouvorEnum.size()}">-</span>
+												</span>
+											</span></td>
+											<td><span th:if="${louvor.ativo}">Ativo</span> <span th:unless="${louvor.ativo}">Inativo</span>
+											</td>
+											<td><a th:href="${louvor.linkVersao}" target="_blank" th:text="${louvor.linkVersao}">
+													Clique para abrir o link </a></td>
+											<td><a th:href="@{/deletarLouvor(id=${louvor.id})}"
+												class="waves-effect waves-light text-danger"> <i class="fas fa-trash-alt fa-lg"></i>
+											</a> <a th:href="@{/editar-louvor(id=${louvor.id})}"
+												class="waves-effect waves-light text-primary"> <i class="fas fa-edit fa-lg"></i>
+											</a></td>
+											<!-- 											<td></td> -->
+										</tr>
+									</tbody>
+								</table>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
+
 		</div>
 
 		<div style="height: 100px;"></div>
@@ -143,46 +200,65 @@
 			
 		</script>
 	<script>
-	$(document).ready(function () {
-	    $("#btnCadastrar").on("click", function () {
-	        $(this).hide();
-	        $("#formularioContainer").show();
-	    });
+		$(document).ready(function () {
+		    $("#btnCadastrar").on("click", function () {
+		        $(this).hide();
+		        $("#formularioContainer").show();
+		        $("#btnSairCadastro").show();
+		    });
 
-	    $("form").submit(function (event) {
-	        event.preventDefault(); // Evitar o comportamento padrão do formulário
+		    $("#btnSairCadastro").on("click", function () {
+		        $(this).hide();
+		        $("#formularioContainer").hide();
+		        $("#btnCadastrar").show();
+		    });
+	
+		    $("form").submit(function (event) {
+		        event.preventDefault(); // Evitar o comportamento padrão do formulário
+	
+		        $.ajax({
+		            type: "POST",
+		            url: $(this).attr("action"),
+		            data: $(this).serialize(),
+		            success: function (response) {
+		                console.log(response);
+	
+		                // Limpar o formulário
+		                $("form")[0].reset();
+	
+		                // Ocultar o formulário
+		                $("#formularioContainer").hide();
+	
+		                // Exibir o botão "Cadastrar Louvor" novamente
+		                $("#btnCadastrar").show();
 
-	        $.ajax({
-	            type: "POST",
-	            url: $(this).attr("action"),
-	            data: $(this).serialize(),
-	            success: function (response) {
-	                console.log(response);
+		                // Atualizar a tabela de louvores
+		                // Este código assume que a resposta contém a tabela HTML completa
+		                $("#tabelaLouvores").html($(response).find("#tabelaLouvores").html());
+		            },
+		            error: function (error) {
+		                console.log(error);
+	
+		                // Exibir mensagem de erro (opcional)
+		                alert("Erro ao cadastrar louvor");
+		            }
+		        });
+		    });
+		});
 
-	                // Limpar o formulário
-	                $("form")[0].reset();
+	</script>
 
-	                // Ocultar o formulário
-	                $("#formularioContainer").hide();
 
-	                // Exibir o botão "Cadastrar Louvor" novamente
-	                $("#btnCadastrar").show();
-
-	                // Atualizar a tabela de louvores
-	                // Este código assume que a resposta contém a tabela HTML completa
-	                $("#tabelaLouvores").html($(response).find("#tabelaLouvores").html());
-	            },
-	            error: function (error) {
-	                console.log(error);
-
-	                // Exibir mensagem de erro (opcional)
-	                alert("Erro ao cadastrar louvor");
-	            }
-	        });
-	    });
-	});
-
-</script>
+	<script>
+		$(document).ready(function(){
+		  $("#myInput").on("keyup", function() {
+		    var value = $(this).val().toLowerCase();
+		    $("#myTable tr").filter(function() {
+		      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+		    });
+		  });
+		});
+  </script>
 
 
 

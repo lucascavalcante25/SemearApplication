@@ -4,17 +4,15 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.semearApp.semearApp.enums.TipoLouvorEnum;
 import com.semearApp.semearApp.models.Louvor;
 import com.semearApp.semearApp.repository.LouvorRepository;
 
@@ -28,37 +26,38 @@ public class LouvorController {
 	public String form() {
 		return "louvor/lista-louvor";
 	}
-	
+
 	@PostMapping("/cadastrarLouvor")
 	public String cadastrarLouvor(@Valid Louvor louvor, BindingResult result, RedirectAttributes attributes) {
-	    if (result.hasErrors()) {
-	        attributes.addFlashAttribute("mensagem", "Verifique os campos");
-	    } else {
-	        louvorRepository.save(louvor);
-	        attributes.addFlashAttribute("mensagem", "Louvor cadastrado com sucesso!");
-	    }
+		if (result.hasErrors()) {
+			attributes.addFlashAttribute("mensagem", "Verifique os campos");
+		} else {
+			louvorRepository.save(louvor);
+			attributes.addFlashAttribute("mensagem", "Louvor cadastrado com sucesso!");
+		}
 
-	    return "redirect:/louvores";
+		return "redirect:/louvores";
 	}
 
-	@GetMapping("/louvores")
-	public String listaLouvores(Model model) {
-	    Iterable<Louvor> louvor = louvorRepository.findAll();
-	    model.addAttribute("louvor", louvor);
-	    return "louvor/lista-louvor";
-	}
-	
-
-	// GET que lista dependentes e detalhes dos Louvor
-	@RequestMapping("/detalhes-Louvor/{id}")
-	public ModelAndView detalhesLouvor(@PathVariable("id") long id) {
-		Louvor louvor = louvorRepository.findById(id);
-		ModelAndView mv = new ModelAndView("louvor/detalhes-louvor");
+	// GET que lista Louvors
+	@RequestMapping("/louvores")
+	public ModelAndView listaLouvores() {
+		ModelAndView mv = new ModelAndView("louvor/lista-louvor");
+		Iterable<Louvor> louvor = louvorRepository.findAll();
 		mv.addObject("louvor", louvor);
-
 		return mv;
-
 	}
+
+//	// GET que lista dependentes e detalhes dos Louvor
+//	@RequestMapping("/detalhes-Louvor/{id}")
+//	public ModelAndView detalhesLouvor(@PathVariable("id") long id) {
+//		Louvor louvor = louvorRepository.findById(id);
+//		ModelAndView mv = new ModelAndView("louvor/detalhes-louvor");
+//		mv.addObject("louvor", louvor);
+//
+//		return mv;
+//
+//	}
 
 	// GET que chama o FORM de edição do Louvor
 	@RequestMapping("/editar-louvor")
@@ -66,6 +65,8 @@ public class LouvorController {
 		Louvor louvor = louvorRepository.findById(id);
 		ModelAndView mv = new ModelAndView("louvor/update-louvor");
 		mv.addObject("louvor", louvor);
+		mv.addObject("tiposLouvorEnum", TipoLouvorEnum.values()); // Adiciona todos os tipos para preencher os
+																	// checkboxes
 		return mv;
 	}
 
@@ -80,12 +81,18 @@ public class LouvorController {
 			// Atualize as propriedades do Louvor existente com os dados do formulário
 			louvorExistente.setNome(louvor.getNome());
 			louvorExistente.setArtista(louvor.getArtista());
-//			louvorExistente.setLetra(louvor.getLetra());
-//			louvorExistente.setCifra(louvor.getCifra());
 			louvorExistente.setTonalidade(louvor.getTonalidade());
 			louvorExistente.setAndamento(louvor.getAndamento());
 			louvorExistente.setLinkVersao(louvor.getLinkVersao());
-//			louvorExistente.setLetra(louvor.getLetra());
+			louvorExistente.setAtivo(louvor.isAtivo());
+
+			// Remove todas as opções antigas
+	        louvorExistente.getTipoLouvorEnum().clear();
+
+	        // Adiciona as novas opções
+	        if (louvor.getTipoLouvorEnum() != null) {
+	            louvorExistente.getTipoLouvorEnum().addAll(louvor.getTipoLouvorEnum());
+	        }
 
 			// Salva o Louvor atualizado no repositório
 			louvorRepository.save(louvorExistente);

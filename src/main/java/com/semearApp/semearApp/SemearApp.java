@@ -9,6 +9,5 @@ public class SemearApp {
 	public static void main(String[] args) {
 		SpringApplication.run(SemearApp.class, args);
 	}
-
 }
 

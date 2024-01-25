@@ -1,31 +1,46 @@
 package com.semearApp.semearApp.models;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 
+import com.semearApp.semearApp.enums.TipoLouvorEnum;
 
 @Entity
 public class Louvor implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
-	
+
 	private String nome;
 	private String artista;
-//	private String letra;
-//	private String cifra;
 	private String tonalidade;
 	private Integer andamento;
 	private String linkVersao;
+
+	@ElementCollection(targetClass = TipoLouvorEnum.class)
+    @CollectionTable(name = "louvor_tipos", joinColumns = @JoinColumn(name = "louvor_id"))
+    @Column(name = "tipo_louvor_enum")
+    @Enumerated(EnumType.ORDINAL)
+    private List<TipoLouvorEnum> tipoLouvorEnum;
 	
+	@Column(columnDefinition = "boolean default false")
+	private boolean ativo;
+
 	public long getId() {
 		return id;
 	}
@@ -50,22 +65,14 @@ public class Louvor implements Serializable {
 		this.artista = artista;
 	}
 
-//	public String getLetra() {
-//		return letra;
-//	}
-//
-//	public void setLetra(String letra) {
-//		this.letra = letra;
-//	}
-//
-//	public String getCifra() {
-//		return cifra;
-//	}
-//
-//	public void setCifra(String cifra) {
-//		this.cifra = cifra;
-//	}
-	
+	public String getTonalidade() {
+		return tonalidade;
+	}
+
+	public void setTonalidade(String tonalidade) {
+		this.tonalidade = tonalidade;
+	}
+
 	public Integer getAndamento() {
 		return andamento;
 	}
@@ -73,7 +80,6 @@ public class Louvor implements Serializable {
 	public void setAndamento(Integer andamento) {
 		this.andamento = andamento;
 	}
-
 
 	public String getLinkVersao() {
 		return linkVersao;
@@ -83,17 +89,26 @@ public class Louvor implements Serializable {
 		this.linkVersao = linkVersao;
 	}
 
-	public String getTonalidade() {
-		return tonalidade;
+
+	public List<TipoLouvorEnum> getTipoLouvorEnum() {
+		return tipoLouvorEnum;
 	}
 
-	public void setTonalidade(String tonalidade) {
-		this.tonalidade = tonalidade;
+	public void setTipoLouvorEnum(List<TipoLouvorEnum> tipoLouvorEnum) {
+		this.tipoLouvorEnum = tipoLouvorEnum;
+	}
+
+	public boolean isAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(boolean ativo) {
+		this.ativo = ativo;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(andamento, artista, id, linkVersao, nome, tonalidade);
+		return Objects.hash(andamento, artista, ativo, id, linkVersao, nome, tipoLouvorEnum, tonalidade);
 	}
 
 	@Override
@@ -105,9 +120,11 @@ public class Louvor implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Louvor other = (Louvor) obj;
-		return Objects.equals(andamento, other.andamento) && Objects.equals(artista, other.artista) && id == other.id
-				&& Objects.equals(linkVersao, other.linkVersao) && Objects.equals(nome, other.nome)
+		return Objects.equals(andamento, other.andamento) && Objects.equals(artista, other.artista)
+				&& ativo == other.ativo && id == other.id && Objects.equals(linkVersao, other.linkVersao)
+				&& Objects.equals(nome, other.nome) && Objects.equals(tipoLouvorEnum, other.tipoLouvorEnum)
 				&& Objects.equals(tonalidade, other.tonalidade);
 	}
+
 
 }
