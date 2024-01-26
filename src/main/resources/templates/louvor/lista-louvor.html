@@ -24,17 +24,27 @@
 	<header>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 			<div class="container-fluid">
-				<a class="navbar-brand" href="/">App Semear</a>
+				<a class="navbar-brand" href="/"> <img src="/imagens/logoSemear.png" alt="Logo da Igreja"
+					style="width: 105px; height: 30px;">
+				</a>
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse"
 					data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
 					aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
 				</button>
+
 				<div class="collapse navbar-collapse" id="navbarNav">
 					<ul class="navbar-nav">
-						<li class="nav-item"><a class="nav-link active" aria-current="page" href="/">Home</a></li>
-						<li class="nav-item"><a class="nav-link" href="/louvores">Louvores</a></li>
-						<!-- 						<li class="nav-item"><a class="nav-link" href="/cadastrarLouvor">Cadastrar Louvor</a></li> -->
+						<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#"
+							id="louvoresDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
+							aria-expanded="false"> Louvor </a>
+							<div class="dropdown-menu" aria-labelledby="louvoresDropdown">
+								<a class="dropdown-item" href="/louvores">Lista de louvores</a> <a class="dropdown-item"
+									href="/grupos-musicas">Grupos de louvores</a>
+							</div></li>
+						<li class="nav-item"><a class="nav-link" href="/"> Visitantes </a></li>
+						<li class="nav-item"><a class="nav-link" href="/"> Avisos </a></li>
+						<li class="nav-item"><a class="nav-link" href="/"> Financeiro </a></li>
 						<li class="nav-item"><a class="nav-link" href="/logout">Sair </a></li>
 					</ul>
 				</div>

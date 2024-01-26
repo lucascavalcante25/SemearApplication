@@ -15,5 +15,7 @@ public interface LouvorRepository extends CrudRepository<Louvor, Long>{
 	// Query para a busca
 	@Query(value = "select u from Louvor u where u.nome like %?1%")
 	List<Louvor>findByNomes(String nome);
+	
+	List<Louvor> findByAtivoTrue();
 
 }

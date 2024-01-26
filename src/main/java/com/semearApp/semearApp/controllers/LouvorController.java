@@ -1,10 +1,14 @@
 package com.semearApp.semearApp.controllers;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -87,12 +91,12 @@ public class LouvorController {
 			louvorExistente.setAtivo(louvor.isAtivo());
 
 			// Remove todas as opções antigas
-	        louvorExistente.getTipoLouvorEnum().clear();
+			louvorExistente.getTipoLouvorEnum().clear();
 
-	        // Adiciona as novas opções
-	        if (louvor.getTipoLouvorEnum() != null) {
-	            louvorExistente.getTipoLouvorEnum().addAll(louvor.getTipoLouvorEnum());
-	        }
+			// Adiciona as novas opções
+			if (louvor.getTipoLouvorEnum() != null) {
+				louvorExistente.getTipoLouvorEnum().addAll(louvor.getTipoLouvorEnum());
+			}
 
 			// Salva o Louvor atualizado no repositório
 			louvorRepository.save(louvorExistente);
@@ -114,4 +118,12 @@ public class LouvorController {
 		return "redirect:/louvores";
 	}
 
+	// GET que lista Louvors
+	@RequestMapping("/grupos-musicas")
+	public ModelAndView gruposMusicas() {
+		ModelAndView mv = new ModelAndView("louvor/grupos-musicas");
+		List<Louvor> louvores = louvorRepository.findByAtivoTrue();
+		mv.addObject("louvores", louvores);
+		return mv;
+	}
 }

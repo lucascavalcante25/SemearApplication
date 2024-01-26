@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang=”pt-br” xmlns:th="http://thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>| App Semear |</title>
+<!-- Bootstrap -->
+<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+	integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+	crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+
+<link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/sidebars/">
+<link href="/docs/5.2/dist/css/bootstrap.min.css" rel="stylesheet"
+	integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
+	crossorigin="anonymous">
+
+<!-- <meta name="theme-color" content="#712cf9"> -->
+
+<!-- Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<!--JavaScript bootstrap-->
+<script type="text/javascript" src="bootstrap/js/bootstrap.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+	integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+	crossorigin="anonymous">
+		
+	</script>
+<!-- Entire bundle -->
+<script type="module">
+  import {
+    Draggable,
+    Sortable,
+    Droppable,
+    Swappable,
+  } from 'https://cdn.jsdelivr.net/npm/@shopify/draggable/build/esm/index.mjs';
+</script>
+<!-- Draggable only -->
+<script type="module">
+  import Draggable from 'https://cdn.jsdelivr.net/npm/@shopify/draggable/build/esm/Draggable/Draggable.mjs';
+</script>
+<!-- Sortable only -->
+<script type="module">
+  import Sortable from 'https://cdn.jsdelivr.net/npm/@shopify/draggable/build/esm/Sortable/Sortable.mjs';
+</script>
+<!-- Droppable only -->
+<script type="module">
+  import Droppable from 'https://cdn.jsdelivr.net/npm/@shopify/draggable/build/esm/Droppable/Droppable.mjs';
+</script>
+<!-- Swappable only -->
+<script type="module">
+  import Swappable from 'https://cdn.jsdelivr.net/npm/@shopify/draggable/build/esm/Swappable/Swappable.mjs';
+</script>
+<!-- Plugins only -->
+<script type="module">
+  import * as Plugins from 'https://cdn.jsdelivr.net/npm/@shopify/draggable/build/esm/Plugins/index.mjs';
+</script>
+<!-- UMD browser -->
+<script src="https://cdn.jsdelivr.net/npm/@shopify/draggable/build/umd/index.min.js"></script>
+<script>
+  console.log(window.Draggable);
+</script>
+
+
+</head>
+<body>
+
+	<header>
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+			<div class="container-fluid">
+				<a class="navbar-brand" href="/"> <img src="/imagens/logoSemear.png" alt="Logo da Igreja"
+					style="width: 105px; height: 30px;">
+				</a>
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+					data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div class="collapse navbar-collapse" id="navbarNav">
+					<ul class="navbar-nav">
+						<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#"
+							id="louvoresDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
+							aria-expanded="false"> Louvor </a>
+							<div class="dropdown-menu" aria-labelledby="louvoresDropdown">
+								<a class="dropdown-item" href="/louvores">Lista de louvores</a> <a class="dropdown-item"
+									href="/grupos-musicas">Grupos de louvores</a>
+							</div></li>
+						<li class="nav-item"><a class="nav-link" href="/"> Visitantes </a></li>
+						<li class="nav-item"><a class="nav-link" href="/"> Avisos </a></li>
+						<li class="nav-item"><a class="nav-link" href="/"> Financeiro </a></li>
+						<!-- 						// QUADRO DE MEMBROS? -->
+						<li class="nav-item"><a class="nav-link" href="/logout">Sair </a></li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+	</header>
+
+	<div class="container mt-4">
+		{% import 'components/StackedList/StackedListItem.html' as StackedListItem %}
+
+{% macro render(id) %}
+  <section id="{{ id }}" class="{{ id }}">
+    <article id="ContainerOne" class="StackedListWrapper StackedListWrapper--sizeLarge StackedListWrapper--axisHorizontal Container">
+      <header class="StackedListHeader">
+        <h3 class="Heading Heading--size3 Heading--colorWhite">Container one</h3>
+      </header>
+
+      <ul class="StackedList">
+        {{ StackedListItem.render('zebra',    {index: 1, draggable: true}) }}
+        {{ StackedListItem.render('giraffe',  {index: 2, draggable: true}) }}
+        {{ StackedListItem.render('baboon',   {index: 3                 }) }}
+        {{ StackedListItem.render('elephant', {index: 4, draggable: true}) }}
+        {{ StackedListItem.render('leopard',  {index: 5, draggable: true}) }}
+      </ul>
+    </article>
+
+    <article id="ContainerTwo" class="StackedListWrapper StackedListWrapper--sizeMedium StackedListWrapper--hasScrollIndicator Container">
+      <header class="StackedListHeader">
+        <h3 class="Heading Heading--size3 Heading--colorWhite">Container two</h3>
+        <p><em>3 item capacity</em></p>
+      </header>
+
+      <ul class="StackedList StackedList--hasScroll">
+        {{ StackedListItem.render('fluorescent grey', {index: 6, draggable: true}) }}
+        {{ StackedListItem.render('rebecca purple',   {index: 7, draggable: true}) }}
+      </ul>
+    </article>
+
+    <article id="ContainerThree" class="StackedListWrapper StackedListWrapper--hasScrollIndicator Container">
+      <header class="StackedListHeader">
+        <h3 class="Heading Heading--size3 Heading--colorWhite">Container three</h3>
+      </header>
+
+      <ul class="StackedList StackedList--hasScroll">
+        {{ StackedListItem.render('apple',         {index: 8,  draggable: true}) }}
+        {{ StackedListItem.render('banana',        {index: 9,  draggable: true}) }}
+        {{ StackedListItem.render('cucumber',      {index: 10, draggable: true}) }}
+        {{ StackedListItem.render('daikon radish', {index: 11                 }) }}
+        {{ StackedListItem.render('elderberry',    {index: 12, draggable: true}) }}
+        {{ StackedListItem.render('fresh thyme',   {index: 13, draggable: true}) }}
+        {{ StackedListItem.render('guava',         {index: 14, draggable: true}) }}
+      </ul>
+    </article>
+  </section>
+	</div>
+
+
+
+
+	<div class="footer-copyright fixed-bottom bg-dark text-center py-3">
+		<span class="text-light align-middle">| App Semear |</span>
+	</div>
+</body>
+
+</html>
