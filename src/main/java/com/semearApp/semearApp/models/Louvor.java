@@ -31,6 +31,10 @@ public class Louvor implements Serializable {
 	private String tonalidade;
 	private Integer andamento;
 	private String linkVersao;
+	
+	@Column(columnDefinition = "boolean default false")
+    private boolean noGrupo;
+
 
 	@ElementCollection(targetClass = TipoLouvorEnum.class)
     @CollectionTable(name = "louvor_tipos", joinColumns = @JoinColumn(name = "louvor_id"))
@@ -40,6 +44,14 @@ public class Louvor implements Serializable {
 	
 	@Column(columnDefinition = "boolean default false")
 	private boolean ativo;
+	
+	public boolean isNoGrupo() {
+		return noGrupo;
+	}
+
+	public void setNoGrupo(boolean noGrupo) {
+		this.noGrupo = noGrupo;
+	}
 
 	public long getId() {
 		return id;
@@ -108,7 +120,7 @@ public class Louvor implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(andamento, artista, ativo, id, linkVersao, nome, tipoLouvorEnum, tonalidade);
+		return Objects.hash(andamento, artista, ativo, id, linkVersao, noGrupo, nome, tipoLouvorEnum, tonalidade);
 	}
 
 	@Override
@@ -122,9 +134,10 @@ public class Louvor implements Serializable {
 		Louvor other = (Louvor) obj;
 		return Objects.equals(andamento, other.andamento) && Objects.equals(artista, other.artista)
 				&& ativo == other.ativo && id == other.id && Objects.equals(linkVersao, other.linkVersao)
-				&& Objects.equals(nome, other.nome) && Objects.equals(tipoLouvorEnum, other.tipoLouvorEnum)
-				&& Objects.equals(tonalidade, other.tonalidade);
+				&& noGrupo == other.noGrupo && Objects.equals(nome, other.nome)
+				&& Objects.equals(tipoLouvorEnum, other.tipoLouvorEnum) && Objects.equals(tonalidade, other.tonalidade);
 	}
+
 
 
 }

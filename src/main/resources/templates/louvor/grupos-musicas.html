@@ -7,73 +7,79 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-
 <title>| App Semear |</title>
-<!-- Bootstrap -->
-<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet"
-	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-	integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
-	crossorigin="anonymous">
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+
+<!-- Bootstrap CSS -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+	rel="stylesheet">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
 
-<link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/sidebars/">
-<link href="/docs/5.2/dist/css/bootstrap.min.css" rel="stylesheet"
-	integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65"
-	crossorigin="anonymous">
+<!-- Draggable Styles -->
+<link rel="stylesheet" href="/draggable-1.0.0-beta.11/css/draggable-styles.css">
 
-<!-- <meta name="theme-color" content="#712cf9"> -->
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i"
+	rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-<!-- Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-<!--JavaScript bootstrap-->
-<script type="text/javascript" src="bootstrap/js/bootstrap.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-	integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-	crossorigin="anonymous">
-		
-	</script>
-<!-- Entire bundle -->
-<script type="module">
-  import {
-    Draggable,
-    Sortable,
-    Droppable,
-    Swappable,
-  } from 'https://cdn.jsdelivr.net/npm/@shopify/draggable/build/esm/index.mjs';
-</script>
-<!-- Draggable only -->
-<script type="module">
-  import Draggable from 'https://cdn.jsdelivr.net/npm/@shopify/draggable/build/esm/Draggable/Draggable.mjs';
-</script>
-<!-- Sortable only -->
-<script type="module">
-  import Sortable from 'https://cdn.jsdelivr.net/npm/@shopify/draggable/build/esm/Sortable/Sortable.mjs';
-</script>
-<!-- Droppable only -->
-<script type="module">
-  import Droppable from 'https://cdn.jsdelivr.net/npm/@shopify/draggable/build/esm/Droppable/Droppable.mjs';
-</script>
-<!-- Swappable only -->
-<script type="module">
-  import Swappable from 'https://cdn.jsdelivr.net/npm/@shopify/draggable/build/esm/Swappable/Swappable.mjs';
-</script>
-<!-- Plugins only -->
-<script type="module">
-  import * as Plugins from 'https://cdn.jsdelivr.net/npm/@shopify/draggable/build/esm/Plugins/index.mjs';
-</script>
-<!-- UMD browser -->
-<script src="https://cdn.jsdelivr.net/npm/@shopify/draggable/build/umd/index.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+
+<style>
+.card {
+	margin-bottom: 20px;
+}
+
+.jumbotron {
+	margin-bottom: 30px;
+}
+
+.group-card {
+	margin-bottom: 30px;
+}
+
+.list-container {
+	margin-top: 30px;
+}
+
+.group-title {
+	text-align: center;
+}
+</style>
+
+
 <script>
-  console.log(window.Draggable);
-</script>
+    $(document).ready(function() {
+      // Inicializar Sortable para cada grupo
+      for (let i = 1; i <= 8; i++) {
+        let groupID = "grupo" + i;
+        Sortable.create(document.getElementById(groupID), {
+          group: 'louvor-groups',
+          draggable: '.list-group-item',
+          handle: '.list-group-item',
+          sort: true,
+          chosenClass: 'active',
+          onAdd: function(evt) {
+            // Lógica a ser executada quando um item é adicionado ao grupo
+            console.log("Item adicionado ao grupo " + i + ": ", evt.item.textContent);
+          }
+        });
+      }
 
+      // Inicializar Sortable para a lista de louvores
+      Sortable.create(document.getElementById('lista-louvores'), {
+        group: 'louvor-groups',
+        draggable: '.list-group-item',
+        handle: '.list-group-item',
+        sort: true,
+        chosenClass: 'active',
+        onStart: function(evt) {
+          // Lógica a ser executada quando um item é arrastado da lista de louvores
+          console.log("Item iniciou o arraste: ", evt.item.textContent);
+        }
+      });
+    });
+  </script>
 
 </head>
 <body>
@@ -110,61 +116,98 @@
 		</nav>
 	</header>
 
-	<div class="container mt-4">
-		{% import 'components/StackedList/StackedListItem.html' as StackedListItem %}
+	<div class="container">
+		<div class="jumbotron">
+			<!-- Restante do conteúdo permanece o mesmo -->
 
-{% macro render(id) %}
-  <section id="{{ id }}" class="{{ id }}">
-    <article id="ContainerOne" class="StackedListWrapper StackedListWrapper--sizeLarge StackedListWrapper--axisHorizontal Container">
-      <header class="StackedListHeader">
-        <h3 class="Heading Heading--size3 Heading--colorWhite">Container one</h3>
-      </header>
+			<!-- Lista de louvores -->
+			<div class="card">
+				<div class="card-body">
+					<ul class="list-group" id="lista-louvores">
+						<!-- Adicione seus louvores dinamicamente aqui usando Thymeleaf -->
+						<li th:each="louvor : ${louvores}" class="list-group-item" th:text="${louvor.nome}"></li>
+					</ul>
+				</div>
+			</div>
+		</div>
 
-      <ul class="StackedList">
-        {{ StackedListItem.render('zebra',    {index: 1, draggable: true}) }}
-        {{ StackedListItem.render('giraffe',  {index: 2, draggable: true}) }}
-        {{ StackedListItem.render('baboon',   {index: 3                 }) }}
-        {{ StackedListItem.render('elephant', {index: 4, draggable: true}) }}
-        {{ StackedListItem.render('leopard',  {index: 5, draggable: true}) }}
-      </ul>
-    </article>
+		<!-- Listas de grupos -->
+		<div class="row list-container">
+			<div class="col-md-3">
+				<div class="card group-card">
+					<div class="card-body">
+						<h3 class="group-title">Grupo 1</h3>
+						<ul class="list-group" id="grupo1"></ul>
+					</div>
+				</div>
+			</div>
 
-    <article id="ContainerTwo" class="StackedListWrapper StackedListWrapper--sizeMedium StackedListWrapper--hasScrollIndicator Container">
-      <header class="StackedListHeader">
-        <h3 class="Heading Heading--size3 Heading--colorWhite">Container two</h3>
-        <p><em>3 item capacity</em></p>
-      </header>
+			<div class="col-md-3">
+				<div class="card group-card">
+					<div class="card-body">
+						<h3 class="group-title">Grupo 2</h3>
+						<ul class="list-group" id="grupo2"></ul>
+					</div>
+				</div>
+			</div>
 
-      <ul class="StackedList StackedList--hasScroll">
-        {{ StackedListItem.render('fluorescent grey', {index: 6, draggable: true}) }}
-        {{ StackedListItem.render('rebecca purple',   {index: 7, draggable: true}) }}
-      </ul>
-    </article>
+			<div class="col-md-3">
+				<div class="card group-card">
+					<div class="card-body">
+						<h3 class="group-title">Grupo 3</h3>
+						<ul class="list-group" id="grupo3"></ul>
+					</div>
+				</div>
+			</div>
 
-    <article id="ContainerThree" class="StackedListWrapper StackedListWrapper--hasScrollIndicator Container">
-      <header class="StackedListHeader">
-        <h3 class="Heading Heading--size3 Heading--colorWhite">Container three</h3>
-      </header>
+			<div class="col-md-3">
+				<div class="card group-card">
+					<div class="card-body">
+						<h3 class="group-title">Grupo 4</h3>
+						<ul class="list-group" id="grupo4"></ul>
+					</div>
+				</div>
+			</div>
 
-      <ul class="StackedList StackedList--hasScroll">
-        {{ StackedListItem.render('apple',         {index: 8,  draggable: true}) }}
-        {{ StackedListItem.render('banana',        {index: 9,  draggable: true}) }}
-        {{ StackedListItem.render('cucumber',      {index: 10, draggable: true}) }}
-        {{ StackedListItem.render('daikon radish', {index: 11                 }) }}
-        {{ StackedListItem.render('elderberry',    {index: 12, draggable: true}) }}
-        {{ StackedListItem.render('fresh thyme',   {index: 13, draggable: true}) }}
-        {{ StackedListItem.render('guava',         {index: 14, draggable: true}) }}
-      </ul>
-    </article>
-  </section>
-	</div>
+			<div class="col-md-3">
+				<div class="card group-card">
+					<div class="card-body">
+						<h3 class="group-title">Grupo 5</h3>
+						<ul class="list-group" id="grupo5"></ul>
+					</div>
+				</div>
+			</div>
 
+			<div class="col-md-3">
+				<div class="card group-card">
+					<div class="card-body">
+						<h3 class="group-title">Grupo 6</h3>
+						<ul class="list-group" id="grupo6"></ul>
+					</div>
+				</div>
+			</div>
 
+			<div class="col-md-3">
+				<div class="card group-card">
+					<div class="card-body">
+						<h3 class="group-title">Grupo 7</h3>
+						<ul class="list-group" id="grupo7"></ul>
+					</div>
+				</div>
+			</div>
 
+			<div class="col-md-3">
+				<div class="card group-card">
+					<div class="card-body">
+						<h3 class="group-title">Grupo 8</h3>
+						<ul class="list-group" id="grupo8"></ul>
+					</div>
+				</div>
+			</div>
+		</div>
 
-	<div class="footer-copyright fixed-bottom bg-dark text-center py-3">
-		<span class="text-light align-middle">| App Semear |</span>
 	</div>
 </body>
+
 
 </html>
