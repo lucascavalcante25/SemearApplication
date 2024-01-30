@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -13,7 +12,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 
 import com.semearApp.semearApp.enums.TipoLouvorEnum;
 
@@ -31,20 +30,21 @@ public class Louvor implements Serializable {
 	private String tonalidade;
 	private Integer andamento;
 	private String linkVersao;
-	
+
 	@Column(columnDefinition = "boolean default false")
-    private boolean noGrupo;
+	private boolean noGrupo;
 
+	@Column(name = "tipo_louvor_enum", nullable = false)
+	@Enumerated(EnumType.STRING)
+	@ElementCollection
+	private List<TipoLouvorEnum> tipoLouvorEnum;
 
-	@ElementCollection(targetClass = TipoLouvorEnum.class)
-    @CollectionTable(name = "louvor_tipos", joinColumns = @JoinColumn(name = "louvor_id"))
-    @Column(name = "tipo_louvor_enum")
-    @Enumerated(EnumType.ORDINAL)
-    private List<TipoLouvorEnum> tipoLouvorEnum;
-	
 	@Column(columnDefinition = "boolean default false")
 	private boolean ativo;
-	
+
+	@ManyToMany(mappedBy = "louvores")
+	private List<GruposDeMusicas> gruposDeMusicas;
+
 	public boolean isNoGrupo() {
 		return noGrupo;
 	}
@@ -101,7 +101,6 @@ public class Louvor implements Serializable {
 		this.linkVersao = linkVersao;
 	}
 
-
 	public List<TipoLouvorEnum> getTipoLouvorEnum() {
 		return tipoLouvorEnum;
 	}
@@ -118,9 +117,18 @@ public class Louvor implements Serializable {
 		this.ativo = ativo;
 	}
 
+	public List<GruposDeMusicas> getGruposDeMusicas() {
+		return gruposDeMusicas;
+	}
+
+	public void setGruposDeMusicas(List<GruposDeMusicas> gruposDeMusicas) {
+		this.gruposDeMusicas = gruposDeMusicas;
+	}
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(andamento, artista, ativo, id, linkVersao, noGrupo, nome, tipoLouvorEnum, tonalidade);
+		return Objects.hash(andamento, artista, ativo, gruposDeMusicas, id, linkVersao, noGrupo, nome, tipoLouvorEnum,
+				tonalidade);
 	}
 
 	@Override
@@ -133,11 +141,10 @@ public class Louvor implements Serializable {
 			return false;
 		Louvor other = (Louvor) obj;
 		return Objects.equals(andamento, other.andamento) && Objects.equals(artista, other.artista)
-				&& ativo == other.ativo && id == other.id && Objects.equals(linkVersao, other.linkVersao)
-				&& noGrupo == other.noGrupo && Objects.equals(nome, other.nome)
-				&& Objects.equals(tipoLouvorEnum, other.tipoLouvorEnum) && Objects.equals(tonalidade, other.tonalidade);
+				&& ativo == other.ativo && Objects.equals(gruposDeMusicas, other.gruposDeMusicas) && id == other.id
+				&& Objects.equals(linkVersao, other.linkVersao) && noGrupo == other.noGrupo
+				&& Objects.equals(nome, other.nome) && Objects.equals(tipoLouvorEnum, other.tipoLouvorEnum)
+				&& Objects.equals(tonalidade, other.tonalidade);
 	}
-
-
 
 }

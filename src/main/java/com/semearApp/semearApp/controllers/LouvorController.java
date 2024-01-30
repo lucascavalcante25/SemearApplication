@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +16,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.semearApp.semearApp.enums.TipoLouvorEnum;
+import com.semearApp.semearApp.models.GruposDeMusicas;
 import com.semearApp.semearApp.models.Louvor;
+import com.semearApp.semearApp.repository.GruposDeMusicasRepository;
 import com.semearApp.semearApp.repository.LouvorRepository;
 
 @Controller
@@ -23,11 +26,16 @@ public class LouvorController {
 
 	@Autowired
 	private LouvorRepository louvorRepository;
+	
+	@Autowired
+    private GruposDeMusicasRepository gruposDeMusicasRepository;
+	
 
 	@RequestMapping("/cadastrarLouvor")
 	public String form() {
 		return "louvor/lista-louvor";
 	}
+	
 
 	@PostMapping("/cadastrarLouvor")
 	public String cadastrarLouvor(@Valid Louvor louvor, BindingResult result, RedirectAttributes attributes) {
@@ -49,17 +57,6 @@ public class LouvorController {
 		mv.addObject("louvor", louvor);
 		return mv;
 	}
-
-//	// GET que lista dependentes e detalhes dos Louvor
-//	@RequestMapping("/detalhes-Louvor/{id}")
-//	public ModelAndView detalhesLouvor(@PathVariable("id") long id) {
-//		Louvor louvor = louvorRepository.findById(id);
-//		ModelAndView mv = new ModelAndView("louvor/detalhes-louvor");
-//		mv.addObject("louvor", louvor);
-//
-//		return mv;
-//
-//	}
 
 	// GET que chama o FORM de edição do Louvor
 	@RequestMapping("/editar-louvor")
@@ -118,11 +115,38 @@ public class LouvorController {
 
 	// GET que lista Louvors
 	@RequestMapping("/grupos-musicas")
-	public ModelAndView gruposMusicas() {
+	public ModelAndView gruposMusicas(Model model) {
 		ModelAndView mv = new ModelAndView("louvor/grupos-musicas");
+	    GruposDeMusicas gruposDeMusicas = new GruposDeMusicas();
 		List<Louvor> louvores = louvorRepository.findByAtivoTrue();
+		
+	    model.addAttribute("gruposDeMusicas", gruposDeMusicas);
+
 		mv.addObject("louvores", louvores); // Use a chave "louvores" ao adicionar a lista
 		return mv;
 	}
+	
+	 @PostMapping("/salvar-grupos-musicas")
+	    public ModelAndView salvarGruposMusicas(@ModelAttribute GruposDeMusicas gruposDeMusicas) {
+	        // Recupera os grupos existentes
+	        GruposDeMusicas grupoExistente = gruposDeMusicasRepository.findById(gruposDeMusicas.getId()).orElse(null);
+
+	        if (grupoExistente != null) {
+	            // Atualiza a lista de louvores associada ao grupo
+	            grupoExistente.getLouvores().clear();
+	            grupoExistente.getLouvores().addAll(gruposDeMusicas.getLouvores());
+	            // Atualiza outras propriedades conforme necessário
+
+	            // Salva as alterações
+	            gruposDeMusicasRepository.save(grupoExistente);
+	        } else {
+	            // Se o grupo não existir, cria um novo
+	            gruposDeMusicasRepository.save(gruposDeMusicas);
+	        }
+
+	        // Redireciona para a página de grupos de músicas ou outra página desejada
+	        return new ModelAndView("redirect:/grupos-musicas");
+	    }
+	
 
 }

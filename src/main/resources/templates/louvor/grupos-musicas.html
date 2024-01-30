@@ -24,6 +24,7 @@
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <style>
 .card {
@@ -49,6 +50,18 @@
 
 
 <script>
+	$(document).ready(function() {
+	    // Adiciona um ouvinte de evento de clique a todos os botões de expansão
+	    $('.btn-outline-primary').on('click', function() {
+	        // Encontre o bloco de detalhes associado usando o atributo data-target
+	        var target = $($(this).data('target'));
+	
+	        // Inverte a visibilidade do bloco de detalhes usando o Bootstrap collapse
+	        target.collapse('toggle');
+	
+	        // Muda automaticamente o ícone do botão Bootstrap de acordo com o estado de expansão
+	    });
+	});
     $(document).ready(function() {
       // Inicializar Sortable para cada grupo
       for (let i = 1; i <= 8; i++) {
@@ -118,89 +131,73 @@
 
 	<div class="container">
 		<div class="jumbotron">
-			<!-- Restante do conteúdo permanece o mesmo -->
-
 			<!-- Lista de louvores -->
 			<div class="card">
 				<div class="card-body">
 					<ul class="list-group" id="lista-louvores">
 						<!-- Adicione seus louvores dinamicamente aqui usando Thymeleaf -->
-						<li th:each="louvor : ${louvores}" class="list-group-item" th:text="${louvor.nome}"></li>
+						<li th:each="louvor : ${louvores}" class="list-group-item">
+							<div class="d-flex justify-content-between align-items-center">
+								<span th:text="${louvor.nome}"></span>
+								<button class="btn btn-outline-primary" type="button" data-toggle="collapse"
+									th:data-target="'#detalhes-' + ${louvor.id}" aria-expanded="false" aria-controls="detalhes">
+									+</button>
+							</div>
+							<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
+								<p>
+									Artista: <span th:text="${louvor.artista}"></span>
+								</p>
+								<p>
+									Tonalidade: <span th:text="${louvor.tonalidade}"></span>
+								</p>
+								<p>
+									Andamento: <span th:text="${louvor.andamento}"></span>
+								</p>
+								<p>
+									Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
+								</p>
+								<p>
+									Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
+										th:text="${louvor.linkVersao}"> Link da Versão </a>
+								</p>
+							</div>
+
+						</li>
 					</ul>
 				</div>
 			</div>
 		</div>
 
+
 		<!-- Listas de grupos -->
 		<div class="row list-container">
-			<div class="col-md-3">
-				<div class="card group-card">
-					<div class="card-body">
-						<h3 class="group-title">Grupo 1</h3>
-						<ul class="list-group" id="grupo1"></ul>
-					</div>
-				</div>
-			</div>
+			<div th:each="grupo, grupoIndex : *{louvores}">
+				<div class="col-md-3">
+					<div class="card group-card">
+						<div class="card-body">
+							<h3 class="group-title" th:text="${'Grupo ' + (grupoIndex.index + 1)}"></h3>
 
-			<div class="col-md-3">
-				<div class="card group-card">
-					<div class="card-body">
-						<h3 class="group-title">Grupo 2</h3>
-						<ul class="list-group" id="grupo2"></ul>
-					</div>
-				</div>
-			</div>
+							<!-- Adicione um formulário para cada grupo -->
+							<form th:object="${gruposDeMusicas}" th:action="@{/salvar-grupos-musicas}" method="post">
+								<!-- Adicione um campo para o nome do grupo -->
+								<label>Nome do Grupo:</label> <input type="text" th:field="*{nome}" />
 
-			<div class="col-md-3">
-				<div class="card group-card">
-					<div class="card-body">
-						<h3 class="group-title">Grupo 3</h3>
-						<ul class="list-group" id="grupo3"></ul>
-					</div>
-				</div>
-			</div>
+								<!-- Adicione campos para os louvores em cada grupo -->
+								<label>Louvores:</label>
+								<div th:each="louvor : ${louvoresDisponiveis}">
+									<input type="checkbox" th:field="*{louvores}" th:value="${louvor.id}" /> <label
+										th:for="${'louvores-' + louvor.id}" th:text="${louvor.nome}"></label><br />
+								</div>
 
-			<div class="col-md-3">
-				<div class="card group-card">
-					<div class="card-body">
-						<h3 class="group-title">Grupo 4</h3>
-						<ul class="list-group" id="grupo4"></ul>
-					</div>
-				</div>
-			</div>
+								<!-- Adicione um botão de salvar para cada grupo -->
+								<button type="submit" class="btn btn-primary">Salvar</button>
+							</form>
 
-			<div class="col-md-3">
-				<div class="card group-card">
-					<div class="card-body">
-						<h3 class="group-title">Grupo 5</h3>
-						<ul class="list-group" id="grupo5"></ul>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-md-3">
-				<div class="card group-card">
-					<div class="card-body">
-						<h3 class="group-title">Grupo 6</h3>
-						<ul class="list-group" id="grupo6"></ul>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-md-3">
-				<div class="card group-card">
-					<div class="card-body">
-						<h3 class="group-title">Grupo 7</h3>
-						<ul class="list-group" id="grupo7"></ul>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-md-3">
-				<div class="card group-card">
-					<div class="card-body">
-						<h3 class="group-title">Grupo 8</h3>
-						<ul class="list-group" id="grupo8"></ul>
+							<!-- Detalhes do Grupo -->
+							<div class="collapse" th:id="'detalhes-' + ${grupoIndex.index}">
+								<!-- Adicione os detalhes do grupo aqui -->
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
