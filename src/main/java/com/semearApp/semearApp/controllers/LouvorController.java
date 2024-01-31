@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -147,59 +148,94 @@ public class LouvorController {
 		mv.addObject("adoracaoLouvores", adoracaoLouvores);
 		mv.addObject("ceiaLouvores", ceiaLouvores);
 
+		// Filtra os louvores por tipo e ativo
+		List<GruposDeMusicas> grupoMusicas1 = new ArrayList<GruposDeMusicas>();
+		List<GruposDeMusicas> grupoMusicas2 = new ArrayList<GruposDeMusicas>();
+		List<GruposDeMusicas> grupoMusicas3 = new ArrayList<GruposDeMusicas>();
+		List<GruposDeMusicas> grupoMusicas4 = new ArrayList<GruposDeMusicas>();
+		List<GruposDeMusicas> grupoMusicas5 = new ArrayList<GruposDeMusicas>();
+		List<GruposDeMusicas> grupoMusicas6 = new ArrayList<GruposDeMusicas>();
+		List<GruposDeMusicas> grupoMusicas7 = new ArrayList<GruposDeMusicas>();
+		List<GruposDeMusicas> grupoMusicas8 = new ArrayList<GruposDeMusicas>();
+
+		// Adiciona a lista de grupos ao modelo
+		Iterable<GruposDeMusicas> grupos = obterGrupos();
+
+		for (GruposDeMusicas listaGrupo : grupos) {
+			if (listaGrupo.getNome().equals("Grupo 1"))
+				grupoMusicas1.add(listaGrupo);
+			else if (listaGrupo.getNome().equals("Grupo 2"))
+				grupoMusicas2.add(listaGrupo);
+			else if (listaGrupo.getNome().equals("Grupo 3"))
+				grupoMusicas3.add(listaGrupo);
+			else if (listaGrupo.getNome().equals("Grupo 4"))
+				grupoMusicas4.add(listaGrupo);
+			else if (listaGrupo.getNome().equals("Grupo 5"))
+				grupoMusicas5.add(listaGrupo);
+			else if (listaGrupo.getNome().equals("Grupo 6"))
+				grupoMusicas6.add(listaGrupo);
+			else if (listaGrupo.getNome().equals("Grupo 7"))
+				grupoMusicas7.add(listaGrupo);
+			else if (listaGrupo.getNome().equals("Grupo 8"))
+				grupoMusicas8.add(listaGrupo);
+
+		}
+
+		mv.addObject("grupoMusicas1", grupoMusicas1);
+		List<Louvor> lg1 = new ArrayList<Louvor>();
+		if(grupoMusicas1 != null){
+			for(GruposDeMusicas l : grupoMusicas1) {
+				for(Louvor lteste: l.getLouvores()) {
+					lg1.add(lteste);
+				}
+			}
+		}
+		mv.addObject("lg1", lg1);
+		
+		mv.addObject("grupoMusicas2", grupoMusicas2);
+		mv.addObject("grupoMusicas3", grupoMusicas3);
+		mv.addObject("grupoMusicas4", grupoMusicas4);
+		mv.addObject("grupoMusicas5", grupoMusicas5);
+		mv.addObject("grupoMusicas6", grupoMusicas6);
+		mv.addObject("grupoMusicas7", grupoMusicas7);
+		mv.addObject("grupoMusicas8", grupoMusicas8);
+
 		return mv;
 	}
 
-	@PostMapping("/salvar-grupos-musicas")
-	public ModelAndView salvarGruposMusicas(@ModelAttribute GruposDeMusicas gruposDeMusicas) {
-		// Recupera os grupos existentes
-		GruposDeMusicas grupoExistente = gruposDeMusicasRepository.findById(gruposDeMusicas.getId()).orElse(null);
-
-		if (grupoExistente != null) {
-			// Atualiza a lista de louvores associada ao grupo
-			grupoExistente.getLouvores().clear();
-			grupoExistente.getLouvores().addAll(gruposDeMusicas.getLouvores());
-			// Atualiza outras propriedades conforme necessário
-
-			// Salva as alterações
-			gruposDeMusicasRepository.save(grupoExistente);
-		} else {
-			// Se o grupo não existir, cria um novo
-			gruposDeMusicasRepository.save(gruposDeMusicas);
-		}
-
-		// Redireciona para a página de grupos de músicas ou outra página desejada
-		return new ModelAndView("redirect:/grupos-musicas");
+	@GetMapping("/obter-grupos")
+	public Iterable<GruposDeMusicas> obterGrupos() {
+		return gruposDeMusicasRepository.findAll(); // Substitua pelo método correto do seu repositório
 	}
-	
-	@PostMapping("/salvar-louvor-ao-grupo")
-	public ResponseEntity<String> adicionarLouvorAoGrupo(@RequestParam Long louvorId, @RequestParam Long grupoId) {
-	    System.out.println("Recebendo solicitação para adicionar louvor ao grupo. Louvor ID: " + louvorId + ", Grupo ID: " + grupoId);
 
-	    Optional<Louvor> louvorOptional = louvorRepository.findById(louvorId);
-	    Optional<GruposDeMusicas> grupoOptional = gruposDeMusicasRepository.findById(grupoId);
+	@PostMapping("/salvar-louvor-ao-grupo")
+	public ResponseEntity<String> adicionarLouvorAoGrupo(@RequestParam Long louvorId, @RequestParam Long grupoId,
+			@RequestParam String nomeDoGrupo) {
+		System.out.println("Recebendo solicitação para adicionar louvor ao grupo. Louvor ID: " + louvorId
+				+ ", Grupo ID: " + grupoId);
+
+		Optional<Louvor> louvorOptional = louvorRepository.findById(louvorId);
+		Optional<GruposDeMusicas> grupoOptional = gruposDeMusicasRepository.findById(grupoId);
 
 //	    Louvor existe e não está em nenhum grupo
-	    if (louvorOptional.isPresent() && !grupoOptional.isPresent()) {
-	    	List<Louvor> listaLouvorAtualizada = new ArrayList<Louvor>();
-	        Louvor louvor = louvorOptional.get();
-	        listaLouvorAtualizada.add(louvor);
-	        
-	        GruposDeMusicas grupoDeMusicas = new GruposDeMusicas();
+		if (louvorOptional.isPresent() && !grupoOptional.isPresent()) {
+			List<Louvor> listaLouvorAtualizada = new ArrayList<Louvor>();
+			Louvor louvor = louvorOptional.get();
+			listaLouvorAtualizada.add(louvor);
 
-	        louvor.setNoGrupo(true); // Atualiza o atributo noGrupo
-	        louvorRepository.save(louvor);
-	        
+			GruposDeMusicas grupoDeMusicas = new GruposDeMusicas();
 
-	        grupoDeMusicas.setLouvores(listaLouvorAtualizada);// Adiciona o louvor ao grupo
-	        gruposDeMusicasRepository.save(grupoDeMusicas);
+			louvor.setNoGrupo(true); // Atualiza o atributo noGrupo
+			louvorRepository.save(louvor);
 
-	        return ResponseEntity.ok("Louvor adicionado ao grupo com sucesso!");
-	    } else {
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Louvor ou grupo não encontrado");
-	    }
+			grupoDeMusicas.setLouvores(listaLouvorAtualizada);// Adiciona o louvor ao grupo
+			grupoDeMusicas.setNome(nomeDoGrupo);
+			gruposDeMusicasRepository.save(grupoDeMusicas);
+
+			return ResponseEntity.ok("Louvor adicionado ao grupo com sucesso!");
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Louvor ou grupo não encontrado");
+		}
 	}
-
-
 
 }

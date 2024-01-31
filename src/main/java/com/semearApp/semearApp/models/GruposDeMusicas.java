@@ -1,19 +1,34 @@
 package com.semearApp.semearApp.models;
-import javax.persistence.*;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 
 @Entity
 public class GruposDeMusicas {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    private String nome;
+	private String nome;
 
-    @ManyToMany
+	@ManyToMany
     private List<Louvor> louvores;
+	
+	public void adicionarLouvor(Louvor louvor) {
+		if (louvores == null) {
+			louvores = new ArrayList<>();
+		}
+		louvores.add(louvor);
+		louvor.getGruposDeMusicas().add(this); // Mapeamento bidirecional
+	}
 
 	public Long getId() {
 		return id;
@@ -56,6 +71,5 @@ public class GruposDeMusicas {
 		return Objects.equals(id, other.id) && Objects.equals(louvores, other.louvores)
 				&& Objects.equals(nome, other.nome);
 	}
-    
 
 }

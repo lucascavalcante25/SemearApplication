@@ -43,7 +43,8 @@ public class Louvor implements Serializable {
 	private boolean ativo;
 
 	@ManyToMany(mappedBy = "louvores")
-	private List<GruposDeMusicas> gruposDeMusicas;
+    private List<GruposDeMusicas> gruposDeMusicas;
+	
 
 	public boolean isNoGrupo() {
 		return noGrupo;
