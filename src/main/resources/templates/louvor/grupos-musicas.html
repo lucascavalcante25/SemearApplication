@@ -101,12 +101,37 @@
         }
     });
 
+    $(document).ready(function () {
+        $('.btn-voltar').on('click', function () {
+            var louvorId = $(this).data('louvor-id');
+            var louvorOrigemId = $(this).data('louvor-origem');
+
+            // Chamada AJAX para mover o louvor de volta para sua lista de origem
+            $.ajax({
+                type: 'POST',
+                url: '/mover-para-lista-de-origem',
+                data: {
+                    louvorId: louvorId,
+                    louvorOrigemId: louvorOrigemId
+                },
+                success: function (response) {
+                    alert(response); // Exiba uma mensagem ou realize ações adicionais conforme necessário
+                },
+                error: function (error) {
+                    console.error('Erro ao mover o louvor de volta:', error);
+                }
+            });
+        });
+    });
+
     function salvarLouvorNoGrupo(louvorId, grupoId, nomeDoGrupo) {
         console.log("Tentando salvar louvor no grupo. Louvor ID: " + louvorId + ", Grupo ID: " + grupoId);
+     // Verifica se o grupoId está definido para determinar se é um novo salvamento ou uma mudança de grupo
+        var isMudancaDeGrupo = grupoId !== undefined;
         
         $.ajax({
             type: 'POST',
-            url: '/salvar-louvor-ao-grupo',
+            url: isMudancaDeGrupo ? '/mudar-louvor-de-grupo' : '/salvar-louvor-ao-grupo',
             data: {
                 louvorId: louvorId,
                 grupoId: grupoId,
@@ -281,12 +306,56 @@
 		</div>
 		<!-- Listas de grupos -->
 		<div class="row list-container">
+			<!-- Grupo 1 -->
 			<div class="col-md-3">
 				<div class="card group-card">
 					<div class="card-body">
 						<h3 class="group-title">Grupo 1</h3>
 						<ul class="list-group" id="grupo1">
-							<li th:each="louvor : ${lg1}">
+							<!-- Iteração sobre os louvores do grupo 1 -->
+							<li th:each="louvor : ${lg1}" class="list-group-item">
+								<div class="d-flex justify-content-between align-items-center">
+									<span th:text="${louvor.nome}"></span>
+									<button class="btn btn-outline-primary" type="button" data-toggle="collapse"
+										th:data-target="'#detalhes-' + ${louvor.id}" aria-expanded="false"
+										aria-controls="detalhes">+</button>
+									<button class="btn btn-outline-secondary btn-voltar" type="button"
+										th:if="${louvor.tipoLouvorEnum != null}" th:data-louvor-id="${louvor.id}"
+										th:data-louvor-origem="${louvor.tipoLouvorEnum}">Voltar</button>
+								</div> <input type="hidden" class="louvor-id" th:value="${louvor.id}" />
+
+								<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
+									<!-- Detalhes do louvor -->
+									<p>
+										Artista: <span th:text="${louvor.artista}"></span>
+									</p>
+									<p>
+										Tonalidade: <span th:text="${louvor.tonalidade}"></span>
+									</p>
+									<p>
+										Andamento: <span th:text="${louvor.andamento}"></span>
+									</p>
+									<p>
+										Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
+									</p>
+									<p>
+										Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
+											th:text="${louvor.linkVersao}"> Link da Versão </a>
+									</p>
+								</div>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-md-3">
+				<div class="card group-card">
+					<div class="card-body">
+						<h3 class="group-title">Grupo 2</h3>
+						<ul class="list-group" id="grupo2">
+							<!-- Iteração sobre os louvores do grupo 2 -->
+							<li th:each="louvor : ${lg2}" class="list-group-item">
 								<div class="d-flex justify-content-between align-items-center">
 									<span th:text="${louvor.nome}"></span>
 									<button class="btn btn-outline-primary" type="button" data-toggle="collapse"
@@ -322,17 +391,38 @@
 			<div class="col-md-3">
 				<div class="card group-card">
 					<div class="card-body">
-						<h3 class="group-title">Grupo 2</h3>
-						<ul class="list-group" id="grupo2"></ul>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-md-3">
-				<div class="card group-card">
-					<div class="card-body">
 						<h3 class="group-title">Grupo 3</h3>
-						<ul class="list-group" id="grupo3"></ul>
+						<ul class="list-group" id="grupo3">
+							<!-- Iteração sobre os louvores do grupo 3 -->
+							<li th:each="louvor : ${lg3}" class="list-group-item">
+								<div class="d-flex justify-content-between align-items-center">
+									<span th:text="${louvor.nome}"></span>
+									<button class="btn btn-outline-primary" type="button" data-toggle="collapse"
+										th:data-target="'#detalhes-' + ${louvor.id}" aria-expanded="false"
+										aria-controls="detalhes">+</button>
+								</div> <input type="hidden" class="louvor-id" th:value="${louvor.id}" />
+
+								<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
+									<!-- Detalhes do louvor -->
+									<p>
+										Artista: <span th:text="${louvor.artista}"></span>
+									</p>
+									<p>
+										Tonalidade: <span th:text="${louvor.tonalidade}"></span>
+									</p>
+									<p>
+										Andamento: <span th:text="${louvor.andamento}"></span>
+									</p>
+									<p>
+										Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
+									</p>
+									<p>
+										Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
+											th:text="${louvor.linkVersao}"> Link da Versão </a>
+									</p>
+								</div>
+							</li>
+						</ul>
 					</div>
 				</div>
 			</div>
@@ -341,7 +431,37 @@
 				<div class="card group-card">
 					<div class="card-body">
 						<h3 class="group-title">Grupo 4</h3>
-						<ul class="list-group" id="grupo4"></ul>
+						<ul class="list-group" id="grupo4">
+							<!-- Iteração sobre os louvores do grupo 4 -->
+							<li th:each="louvor : ${lg4}" class="list-group-item">
+								<div class="d-flex justify-content-between align-items-center">
+									<span th:text="${louvor.nome}"></span>
+									<button class="btn btn-outline-primary" type="button" data-toggle="collapse"
+										th:data-target="'#detalhes-' + ${louvor.id}" aria-expanded="false"
+										aria-controls="detalhes">+</button>
+								</div> <input type="hidden" class="louvor-id" th:value="${louvor.id}" />
+
+								<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
+									<!-- Detalhes do louvor -->
+									<p>
+										Artista: <span th:text="${louvor.artista}"></span>
+									</p>
+									<p>
+										Tonalidade: <span th:text="${louvor.tonalidade}"></span>
+									</p>
+									<p>
+										Andamento: <span th:text="${louvor.andamento}"></span>
+									</p>
+									<p>
+										Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
+									</p>
+									<p>
+										Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
+											th:text="${louvor.linkVersao}"> Link da Versão </a>
+									</p>
+								</div>
+							</li>
+						</ul>
 					</div>
 				</div>
 			</div>
@@ -350,7 +470,37 @@
 				<div class="card group-card">
 					<div class="card-body">
 						<h3 class="group-title">Grupo 5</h3>
-						<ul class="list-group" id="grupo5"></ul>
+						<ul class="list-group" id="grupo5">
+							<!-- Iteração sobre os louvores do grupo 5 -->
+							<li th:each="louvor : ${lg5}" class="list-group-item">
+								<div class="d-flex justify-content-between align-items-center">
+									<span th:text="${louvor.nome}"></span>
+									<button class="btn btn-outline-primary" type="button" data-toggle="collapse"
+										th:data-target="'#detalhes-' + ${louvor.id}" aria-expanded="false"
+										aria-controls="detalhes">+</button>
+								</div> <input type="hidden" class="louvor-id" th:value="${louvor.id}" />
+
+								<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
+									<!-- Detalhes do louvor -->
+									<p>
+										Artista: <span th:text="${louvor.artista}"></span>
+									</p>
+									<p>
+										Tonalidade: <span th:text="${louvor.tonalidade}"></span>
+									</p>
+									<p>
+										Andamento: <span th:text="${louvor.andamento}"></span>
+									</p>
+									<p>
+										Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
+									</p>
+									<p>
+										Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
+											th:text="${louvor.linkVersao}"> Link da Versão </a>
+									</p>
+								</div>
+							</li>
+						</ul>
 					</div>
 				</div>
 			</div>
@@ -359,7 +509,37 @@
 				<div class="card group-card">
 					<div class="card-body">
 						<h3 class="group-title">Grupo 6</h3>
-						<ul class="list-group" id="grupo6"></ul>
+						<ul class="list-group" id="grupo6">
+							<!-- Iteração sobre os louvores do grupo 6 -->
+							<li th:each="louvor : ${lg6}" class="list-group-item">
+								<div class="d-flex justify-content-between align-items-center">
+									<span th:text="${louvor.nome}"></span>
+									<button class="btn btn-outline-primary" type="button" data-toggle="collapse"
+										th:data-target="'#detalhes-' + ${louvor.id}" aria-expanded="false"
+										aria-controls="detalhes">+</button>
+								</div> <input type="hidden" class="louvor-id" th:value="${louvor.id}" />
+
+								<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
+									<!-- Detalhes do louvor -->
+									<p>
+										Artista: <span th:text="${louvor.artista}"></span>
+									</p>
+									<p>
+										Tonalidade: <span th:text="${louvor.tonalidade}"></span>
+									</p>
+									<p>
+										Andamento: <span th:text="${louvor.andamento}"></span>
+									</p>
+									<p>
+										Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
+									</p>
+									<p>
+										Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
+											th:text="${louvor.linkVersao}"> Link da Versão </a>
+									</p>
+								</div>
+							</li>
+						</ul>
 					</div>
 				</div>
 			</div>
@@ -368,7 +548,37 @@
 				<div class="card group-card">
 					<div class="card-body">
 						<h3 class="group-title">Grupo 7</h3>
-						<ul class="list-group" id="grupo7"></ul>
+						<ul class="list-group" id="grupo7">
+							<!-- Iteração sobre os louvores do grupo 7 -->
+							<li th:each="louvor : ${lg7}" class="list-group-item">
+								<div class="d-flex justify-content-between align-items-center">
+									<span th:text="${louvor.nome}"></span>
+									<button class="btn btn-outline-primary" type="button" data-toggle="collapse"
+										th:data-target="'#detalhes-' + ${louvor.id}" aria-expanded="false"
+										aria-controls="detalhes">+</button>
+								</div> <input type="hidden" class="louvor-id" th:value="${louvor.id}" />
+
+								<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
+									<!-- Detalhes do louvor -->
+									<p>
+										Artista: <span th:text="${louvor.artista}"></span>
+									</p>
+									<p>
+										Tonalidade: <span th:text="${louvor.tonalidade}"></span>
+									</p>
+									<p>
+										Andamento: <span th:text="${louvor.andamento}"></span>
+									</p>
+									<p>
+										Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
+									</p>
+									<p>
+										Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
+											th:text="${louvor.linkVersao}"> Link da Versão </a>
+									</p>
+								</div>
+							</li>
+						</ul>
 					</div>
 				</div>
 			</div>
@@ -377,99 +587,41 @@
 				<div class="card group-card">
 					<div class="card-body">
 						<h3 class="group-title">Grupo 8</h3>
-						<ul class="list-group" id="grupo8"></ul>
+						<ul class="list-group" id="grupo8">
+							<!-- Iteração sobre os louvores do grupo 8 -->
+							<li th:each="louvor : ${lg8}" class="list-group-item">
+								<div class="d-flex justify-content-between align-items-center">
+									<span th:text="${louvor.nome}"></span>
+									<button class="btn btn-outline-primary" type="button" data-toggle="collapse"
+										th:data-target="'#detalhes-' + ${louvor.id}" aria-expanded="false"
+										aria-controls="detalhes">+</button>
+								</div> <input type="hidden" class="louvor-id" th:value="${louvor.id}" />
+
+								<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
+									<!-- Detalhes do louvor -->
+									<p>
+										Artista: <span th:text="${louvor.artista}"></span>
+									</p>
+									<p>
+										Tonalidade: <span th:text="${louvor.tonalidade}"></span>
+									</p>
+									<p>
+										Andamento: <span th:text="${louvor.andamento}"></span>
+									</p>
+									<p>
+										Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
+									</p>
+									<p>
+										Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
+											th:text="${louvor.linkVersao}"> Link da Versão </a>
+									</p>
+								</div>
+							</li>
+						</ul>
 					</div>
 				</div>
 			</div>
 		</div>
-		<!-- 			<div th:each="grupo : ${grupoMusicas1}" class="col-md-3"> -->
-		<!-- 				<div class="card group-card"> -->
-		<!-- 					<div class="card-body"> -->
-		<!-- 						<h3 th:text="${grupo.nome}" class="group-title"></h3> -->
-		<!-- 						<ul class="list-group" id="grupo1"> -->
-		<!-- 							Iteração sobre os louvores do grupo 1 -->
-		<!-- 							<li th:each="louvor : ${grupo.louvores}" th:text="${louvor.nome}"class="list-group-item"></li> -->
-		<!-- 						</ul> -->
-		<!-- 					</div> -->
-		<!-- 				</div> -->
-		<!-- 			</div> -->
-
-		<!-- 			<div class="col-md-3" th:each="grupo : ${grupoMusicas2}"> -->
-		<!-- 				<div class="card group-card"> -->
-		<!-- 					<div class="card-body"> -->
-		<!-- 						<h3 class="group-title" th:text="${grupo.nome}"></h3> -->
-		<!-- 						<ul class="list-group" id="grupo2"> -->
-		<!-- 							Iteração sobre os louvores do grupo 2 -->
-		<!-- 							<li class="list-group-item" th:each="louvor : ${grupo.louvores}" th:text="${louvor.nome}"></li> -->
-		<!-- 						</ul> -->
-		<!-- 					</div> -->
-		<!-- 				</div> -->
-		<!-- 			</div> -->
-		<!-- 			<div class="col-md-3" th:each="grupo : ${grupoMusicas3}"> -->
-		<!-- 				<div class="card group-card"> -->
-		<!-- 					<div class="card-body"> -->
-		<!-- 						<h3 class="group-title" th:text="${grupo.nome}"></h3> -->
-		<!-- 						<ul class="list-group" id="grupo3"> -->
-		<!-- 							<li class="list-group-item" th:each="louvor : ${grupo.louvores}" th:text="${louvor.nome}"></li> -->
-		<!-- 						</ul> -->
-		<!-- 					</div> -->
-		<!-- 				</div> -->
-		<!-- 			</div> -->
-
-		<!-- 			<div class="col-md-3" th:each="grupo : ${grupoMusicas4}"> -->
-		<!-- 				<div class="card group-card"> -->
-		<!-- 					<div class="card-body"> -->
-		<!-- 						<h3 class="group-title" th:text="${grupo.nome}"></h3> -->
-		<!-- 						<ul class="list-group" id="grupo4"> -->
-		<!-- 							<li class="list-group-item" th:each="louvor : ${grupo.louvores}" th:text="${louvor.nome}"></li> -->
-		<!-- 						</ul> -->
-		<!-- 					</div> -->
-		<!-- 				</div> -->
-		<!-- 			</div> -->
-
-		<!-- 			<div class="col-md-3" th:each="grupo : ${grupoMusicas5}"> -->
-		<!-- 				<div class="card group-card"> -->
-		<!-- 					<div class="card-body"> -->
-		<!-- 						<h3 class="group-title" th:text="${grupo.nome}"></h3> -->
-		<!-- 						<ul class="list-group" id="grupo5"> -->
-		<!-- 							<li class="list-group-item" th:each="louvor : ${grupo.louvores}" th:text="${louvor.nome}"></li> -->
-		<!-- 						</ul> -->
-		<!-- 					</div> -->
-		<!-- 				</div> -->
-		<!-- 			</div> -->
-
-		<!-- 			<div class="col-md-3" th:each="grupo : ${grupoMusicas6}"> -->
-		<!-- 				<div class="card group-card"> -->
-		<!-- 					<div class="card-body"> -->
-		<!-- 						<h3 class="group-title" th:text="${grupo.nome}"></h3> -->
-		<!-- 						<ul class="list-group" id="grupo6"> -->
-		<!-- 							<li class="list-group-item" th:each="louvor : ${grupo.louvores}" th:text="${louvor.nome}"></li> -->
-		<!-- 						</ul> -->
-		<!-- 					</div> -->
-		<!-- 				</div> -->
-		<!-- 			</div> -->
-		<!-- 			<div class="col-md-3" th:each="grupo : ${grupoMusicas7}"> -->
-		<!-- 				<div class="card group-card"> -->
-		<!-- 					<div class="card-body"> -->
-		<!-- 						<h3 class="group-title" th:text="${grupo.nome}"></h3> -->
-		<!-- 						<ul class="list-group" id="grupo7"> -->
-		<!-- 							<li class="list-group-item" th:each="louvor : ${grupo.louvores}" th:text="${louvor.nome}"></li> -->
-		<!-- 						</ul> -->
-		<!-- 					</div> -->
-		<!-- 				</div> -->
-		<!-- 			</div> -->
-
-		<!-- 			<div class="col-md-3" th:each="grupo : ${grupoMusicas8}"> -->
-		<!-- 				<div class="card group-card"> -->
-		<!-- 					<div class="card-body"> -->
-		<!-- 						<h3 class="group-title" th:text="${grupo.nome}"></h3> -->
-		<!-- 						<ul class="list-group" id="grupo8"> -->
-		<!-- 							<li class="list-group-item" th:each="louvor : ${grupo.louvores}" th:text="${louvor.nome}"></li> -->
-		<!-- 						</ul> -->
-		<!-- 					</div> -->
-		<!-- 				</div> -->
-		<!-- 			</div> -->
-		<!-- 		</div> -->
 	</div>
 </body>
 

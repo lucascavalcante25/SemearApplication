@@ -35,6 +35,12 @@ public class LouvorController {
 	@Autowired
 	private GruposDeMusicasRepository gruposDeMusicasRepository;
 
+	@Autowired
+	public LouvorController(LouvorRepository louvorRepository, GruposDeMusicasRepository gruposDeMusicasRepository) {
+		this.louvorRepository = louvorRepository;
+		this.gruposDeMusicasRepository = gruposDeMusicasRepository;
+	}
+
 	@RequestMapping("/cadastrarLouvor")
 	public String form() {
 		return "louvor/lista-louvor";
@@ -183,22 +189,91 @@ public class LouvorController {
 
 		mv.addObject("grupoMusicas1", grupoMusicas1);
 		List<Louvor> lg1 = new ArrayList<Louvor>();
-		if(grupoMusicas1 != null){
-			for(GruposDeMusicas l : grupoMusicas1) {
-				for(Louvor lteste: l.getLouvores()) {
+		if (grupoMusicas1 != null) {
+			for (GruposDeMusicas l : grupoMusicas1) {
+				for (Louvor lteste : l.getLouvores()) {
 					lg1.add(lteste);
 				}
 			}
 		}
 		mv.addObject("lg1", lg1);
-		
+
 		mv.addObject("grupoMusicas2", grupoMusicas2);
+		List<Louvor> lg2 = new ArrayList<Louvor>();
+		if (grupoMusicas2 != null) {
+			for (GruposDeMusicas l : grupoMusicas2) {
+				for (Louvor lteste : l.getLouvores()) {
+					lg2.add(lteste);
+				}
+			}
+		}
+		mv.addObject("lg2", lg2);
+
 		mv.addObject("grupoMusicas3", grupoMusicas3);
+		List<Louvor> lg3 = new ArrayList<Louvor>();
+		if (grupoMusicas3 != null) {
+			for (GruposDeMusicas l : grupoMusicas3) {
+				for (Louvor lteste : l.getLouvores()) {
+					lg3.add(lteste);
+				}
+			}
+		}
+		mv.addObject("lg3", lg3);
+
 		mv.addObject("grupoMusicas4", grupoMusicas4);
+		List<Louvor> lg4 = new ArrayList<Louvor>();
+		if (grupoMusicas4 != null) {
+			for (GruposDeMusicas l : grupoMusicas4) {
+				for (Louvor lteste : l.getLouvores()) {
+					lg4.add(lteste);
+				}
+			}
+		}
+		mv.addObject("lg4", lg4);
+
 		mv.addObject("grupoMusicas5", grupoMusicas5);
+		List<Louvor> lg5 = new ArrayList<Louvor>();
+		if (grupoMusicas5 != null) {
+			for (GruposDeMusicas l : grupoMusicas5) {
+				for (Louvor lteste : l.getLouvores()) {
+					lg5.add(lteste);
+				}
+			}
+		}
+		mv.addObject("lg5", lg5);
+
 		mv.addObject("grupoMusicas6", grupoMusicas6);
+		List<Louvor> lg6 = new ArrayList<Louvor>();
+		if (grupoMusicas6 != null) {
+			for (GruposDeMusicas l : grupoMusicas6) {
+				for (Louvor lteste : l.getLouvores()) {
+					lg6.add(lteste);
+				}
+			}
+		}
+		mv.addObject("lg6", lg6);
+
 		mv.addObject("grupoMusicas7", grupoMusicas7);
+		List<Louvor> lg7 = new ArrayList<Louvor>();
+		if (grupoMusicas7 != null) {
+			for (GruposDeMusicas l : grupoMusicas7) {
+				for (Louvor lteste : l.getLouvores()) {
+					lg7.add(lteste);
+				}
+			}
+		}
+		mv.addObject("lg7", lg7);
+
 		mv.addObject("grupoMusicas8", grupoMusicas8);
+		List<Louvor> lg8 = new ArrayList<Louvor>();
+		if (grupoMusicas8 != null) {
+			for (GruposDeMusicas l : grupoMusicas8) {
+				for (Louvor lteste : l.getLouvores()) {
+					lg8.add(lteste);
+				}
+			}
+		}
+		mv.addObject("lg8", lg8);
 
 		return mv;
 	}
@@ -237,5 +312,73 @@ public class LouvorController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Louvor ou grupo não encontrado");
 		}
 	}
+
+	@PostMapping("/mudar-louvor-de-grupo")
+    public ResponseEntity<String> moverParaGrupo(@RequestParam Long louvorId, @RequestParam String novoGrupo) {
+        try {
+            // Lógica para mover o louvor para o novo grupo no banco de dados
+            Optional<Louvor> louvorOptional = louvorRepository.findById(louvorId);
+
+            if (louvorOptional.isPresent()) {
+                Louvor louvor = louvorOptional.get();
+
+                // Buscar o grupo pelo nome
+                Optional<GruposDeMusicas> grupoOptional = gruposDeMusicasRepository.findByNome(novoGrupo);
+
+                if (grupoOptional.isPresent()) {
+                    GruposDeMusicas novoGrupoEntity = grupoOptional.get();
+
+                    // Adicionar ou remover o louvor da lista de louvores associados ao grupo
+                    if (!louvor.getGruposDeMusicas().contains(novoGrupoEntity)) {
+                        louvor.getGruposDeMusicas().add(novoGrupoEntity);
+                    } else {
+                        louvor.getGruposDeMusicas().remove(novoGrupoEntity);
+                    }
+
+                    louvorRepository.save(louvor);
+
+                    return ResponseEntity.ok("Louvor movido com sucesso para o grupo " + novoGrupo);
+                } else {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                            .body("Grupo não encontrado com nome: " + novoGrupo);
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Louvor não encontrado com ID: " + louvorId);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Erro ao mover o louvor para o grupo " + novoGrupo + ": " + e.getMessage());
+        }
+    }
+	
+	@SuppressWarnings("unlikely-arg-type")
+	@PostMapping("/mover-para-lista-de-origem")
+    public ResponseEntity<String> moverParaOrigem(@RequestParam Long louvorId, @RequestParam String louvorOrigemId) {
+        try {
+            Optional<Louvor> louvorOptional = louvorRepository.findById(louvorId);
+            Optional<Louvor> origemOptional = louvorRepository.findById(louvorOrigemId);
+
+            if (louvorOptional.isPresent() && origemOptional.isPresent()) {
+                Louvor louvor = louvorOptional.get();
+                Louvor origem = origemOptional.get();
+
+                // Lógica para remover o louvor do grupo
+                origem.getGruposDeMusicas().remove(louvor);
+                louvor.setNoGrupo(false);
+
+                louvorRepository.save(louvor);
+                louvorRepository.save(origem);
+
+                return ResponseEntity.ok("Louvor movido de volta para a lista de origem com sucesso.");
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Louvor ou origem não encontrado.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Erro ao mover o louvor de volta para a lista de origem: " + e.getMessage());
+        }
+    }
 
 }
