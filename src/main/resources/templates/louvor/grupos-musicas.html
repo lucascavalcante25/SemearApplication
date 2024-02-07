@@ -1,194 +1,252 @@
 <!DOCTYPE html>
-<html lang=”pt-br” xmlns:th="http://thymeleaf.org"
-	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html lang=”pt-br” xmlns:th="http://thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
 <head>
 
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>| App Semear |</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>| App Semear |</title>
 
-<!-- Bootstrap CSS -->
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-	rel="stylesheet">
-<link rel="stylesheet"
-	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+	<!-- Bootstrap CSS -->
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
 
-<!-- Draggable Styles -->
-<link rel="stylesheet" href="/draggable-1.0.0-beta.11/css/draggable-styles.css">
+	<!-- Draggable Styles -->
+	<link rel="stylesheet" href="/draggable-1.0.0-beta.11/css/draggable-styles.css">
 
-<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i"
-	rel="stylesheet">
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<style>
-.card {
-	margin-bottom: 20px;
-}
+	<style>
+		.card {
+			margin-bottom: 20px;
+		}
 
-.jumbotron {
-	margin-bottom: 30px;
-}
+		.jumbotron {
+			margin-bottom: 30px;
+		}
 
-.group-card {
-	margin-bottom: 30px;
-}
+		.group-card {
+			margin-bottom: 30px;
+		}
 
-.list-container {
-	margin-top: 30px;
-}
+		.list-container {
+			margin-top: 30px;
+		}
 
-.group-title {
-	text-align: center;
-}
-</style>
+		.group-title {
+			text-align: center;
+		}
+	</style>
 
 
-<SCRIPT>
-    $(document).ready(function() {
-        // Adiciona um ouvinte de evento de clique a todos os botões de expansão
-        $('.btn-outline-primary').on('click', function() {
-            // Encontre o bloco de detalhes associado usando o atributo data-target
-            var target = $($(this).data('target'));
+	<SCRIPT>
+		$(document).ready(
+			function () {
+				// Adiciona um ouvinte de evento de clique a todos os botões de expansão
+				$('.btn-outline-primary').on('click', function () {
+					// Encontre o bloco de detalhes associado usando o atributo data-target
+					var target = $($(this).data('target'));
 
-            // Inverte a visibilidade do bloco de detalhes usando o Bootstrap collapse
-            target.collapse('toggle');
-        });
+					// Inverte a visibilidade do bloco de detalhes usando o Bootstrap collapse
+					target.collapse('toggle');
+				});
 
-     // Inicializar Sortable para cada grupo
-        for (let i = 1; i <= 8; i++) {
-            let groupID = "grupo" + i;
-            Sortable.create(document.getElementById(groupID), {
-                group: 'louvor-groups',
-                draggable: '.list-group-item',
-                handle: '.list-group-item',
-                sort: true,
-                chosenClass: 'active',
-                onAdd: function(evt) {
-                    // Lógica a ser executada quando um item é adicionado ao grupo
-                    console.log("Item adicionado ao grupo " + i + ": ", evt.item.textContent);
+				// Inicializar Sortable para cada grupo
+				for (let i = 1; i <= 8; i++) {
+					let groupID = "grupo" + i;
+					Sortable.create(document.getElementById(groupID),
+						{
+							group: 'louvor-groups',
+							draggable: '.list-group-item',
+							handle: '.list-group-item',
+							sort: true,
+							chosenClass: 'active',
+							onAdd: function (evt) {
+								// Lógica a ser executada quando um item é adicionado ao grupo
+								console.log("Item adicionado ao grupo " + i
+									+ ": ", evt.item.textContent);
 
-                    // Adiciona o ID do louvor diretamente ao elemento da lista
-                    var louvorId = evt.item.querySelector('.louvor-id').value;
-                    var nomeDoGrupo = "Grupo " + i; // Altere conforme necessário
-                    console.log(louvorId);
+								// Adiciona o ID do louvor diretamente ao elemento da lista
+								var louvorId = evt.item
+									.querySelector('.louvor-id').value;
+								var nomeDoGrupo = "Grupo " + i; // Altere conforme necessário
+								console.log(louvorId);
 
-                    // Chame a função para salvar o louvor no grupo
-                    salvarLouvorNoGrupo(louvorId, i, nomeDoGrupo);
-                }
-            });
-        }
+								// Chame a função para salvar o louvor no grupo
+								salvarLouvorNoGrupo(louvorId, i,
+									nomeDoGrupo);
+							}
+						});
+				}
 
-        // Inicializar Sortable para cada lista de louvores
-        for (let i = 1; i <= 3; i++) { // assumindo 3 tipos de louvor (JUBILO, ADORACAO, CEIA)
-            let louvorListID = "lista-louvores-" + i;
-            Sortable.create(document.getElementById(louvorListID), {
-                group: 'louvor-groups',
-                draggable: '.list-group-item',
-                handle: '.list-group-item',
-                sort: true,
-                chosenClass: 'active',
-                onStart: function(evt) {
-                    // Lógica a ser executada quando um item é arrastado da lista de louvores
-                    console.log("Item iniciou o arraste: ", evt.item.textContent);
-                }
-            });
-        }
-    });
+				// Inicializar Sortable para cada lista de louvores
+				for (let i = 1; i <= 3; i++) { // assumindo 3 tipos de louvor (JUBILO, ADORACAO, CEIA)
+					let louvorListID = "lista-louvores-" + i;
+					Sortable.create(document.getElementById(louvorListID), {
+						group: 'louvor-groups',
+						draggable: '.list-group-item',
+						handle: '.list-group-item',
+						sort: true,
+						chosenClass: 'active',
+						onStart: function (evt) {
+							// Lógica a ser executada quando um item é arrastado da lista de louvores
+							console.log("Item iniciou o arraste: ",
+								evt.item.textContent);
+						}
+					});
+				}
+			});
 
-    $(document).ready(function () {
-        $('.btn-voltar').on('click', function () {
-            var louvorId = $(this).data('louvor-id');
-            var louvorOrigemId = $(this).data('louvor-origem');
+		$(document)
+			.ready(
+				function () {
+					$('.btn-voltar')
+						.on(
+							'click',
+							function () {
+								var louvorId = $(this).data(
+									'louvor-id');
+								var tipoLouvor = $(this).data(
+									'louvor-origem');
+								var listItemToRemove = $(this)
+									.closest('.list-group-item');
+								var listItemData = listItemToRemove
+									.html();
 
-            // Chamada AJAX para mover o louvor de volta para sua lista de origem
-            $.ajax({
-                type: 'POST',
-                url: '/mover-para-lista-de-origem',
-                data: {
-                    louvorId: louvorId,
-                    louvorOrigemId: louvorOrigemId
-                },
-                success: function (response) {
-                    alert(response); // Exiba uma mensagem ou realize ações adicionais conforme necessário
-                },
-                error: function (error) {
-                    console.error('Erro ao mover o louvor de volta:', error);
-                }
-            });
-        });
-    });
+								$
+									.ajax({
+										type: 'POST',
+										url: '/mover-para-lista-de-origem',
+										data: {
+											louvorId: louvorId,
+											tipoLouvor: tipoLouvor
+										},
+										success: function (
+											response) {
+											alert(response);
+											listItemToRemove
+												.remove();
 
-    function salvarLouvorNoGrupo(louvorId, grupoId, nomeDoGrupo) {
-        console.log("Tentando salvar louvor no grupo. Louvor ID: " + louvorId + ", Grupo ID: " + grupoId);
-     // Verifica se o grupoId está definido para determinar se é um novo salvamento ou uma mudança de grupo
-        var isMudancaDeGrupo = grupoId !== undefined;
-        
-        $.ajax({
-            type: 'POST',
-            url: isMudancaDeGrupo ? '/mudar-louvor-de-grupo' : '/salvar-louvor-ao-grupo',
-            data: {
-                louvorId: louvorId,
-                grupoId: grupoId,
-                nomeDoGrupo: nomeDoGrupo
-            },
-            success: function(response) {
-                console.log("Resposta do servidor:", response); // Log da resposta do servidor (pode ser removido)
-                // Lógica adicional se necessário
-            },
-            error: function(error) {
-                console.error("Erro ao salvar louvor no grupo:", error);
-                // Lógica adicional de tratamento de erro, se necessário
-            }
-        });
-    }
+											// Adicionar o louvor de volta à lista correspondente
+											var listaCorrespondenteId = '#lista-louvores-'
+												+ obterIndiceLista(tipoLouvor);
+											if (listaCorrespondenteId !== '#lista-louvores-1') { // Verificar se não é a lista principal
+												$(
+													listaCorrespondenteId)
+													.append(
+														'<li class="list-group-item">'
+														+ listItemData
+														+ '</li>');
+											}
+										},
+										error: function (error) {
+											console
+												.error(
+													'Erro ao mover o louvor de volta:',
+													error);
+										}
+									});
+							});
 
+					function obterIndiceLista(tipoLouvor) {
+						// Mapear tipoLouvorEnum para o índice da lista
+						if (tipoLouvor === 'JUBILO') {
+							return 1;
+						} else if (tipoLouvor === 'ADORACAO') {
+							return 2;
+						} else if (tipoLouvor === 'CEIA') {
+							return 3;
+						}
+						// Adicione mais mapeamentos conforme necessário
 
+						// Caso padrão (retorna 1 por padrão)
+						return 1;
+					}
+				});
 
-</SCRIPT>
+		function salvarLouvorNoGrupo(louvorId, grupoId, nomeDoGrupo) {
+			console.log("Tentando salvar louvor no grupo. Louvor ID: " + louvorId
+				+ ", Grupo ID: " + grupoId);
+			// Verifica se o grupoId está definido para determinar se é um novo salvamento ou uma mudança de grupo
+			var isMudancaDeGrupo = grupoId !== undefined;
+
+			$.ajax({
+				type: 'POST',
+				url: isMudancaDeGrupo ? '/salvar-louvor-ao-grupo'
+					: '/mudar-louvor-de-grupo',
+				data: {
+					louvorId: louvorId,
+					grupoId: grupoId,
+					nomeDoGrupo: nomeDoGrupo
+				},
+				success: function (response) {
+					console.log("Resposta do servidor:", response); // Log da resposta do servidor (pode ser removido)
+					// Lógica adicional se necessário
+				},
+				error: function (error) {
+					console.error("Erro ao salvar louvor no grupo:", error);
+					// Lógica adicional de tratamento de erro, se necessário
+				}
+			});
+		}
+	</SCRIPT>
 
 
 
 </head>
+
 <body>
 
 	<header>
 		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 			<div class="container-fluid">
 				<a class="navbar-brand" href="/"> <img src="/imagens/logoSemear.png" alt="Logo da Igreja"
-					style="width: 105px; height: 30px;">
+						style="width: 105px; height: 30px;">
 				</a>
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-					data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
-					aria-label="Toggle navigation">
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+					aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
 				</button>
 
 				<div class="collapse navbar-collapse" id="navbarNav">
 					<ul class="navbar-nav">
-						<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#"
-							id="louvoresDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
-							aria-expanded="false"> Louvor </a>
+						<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="louvoresDropdown"
+								role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								Louvor </a>
 							<div class="dropdown-menu" aria-labelledby="louvoresDropdown">
-								<a class="dropdown-item" href="/louvores">Lista de louvores</a> <a class="dropdown-item"
-									href="/grupos-musicas">Grupos de louvores</a>
-							</div></li>
-						<li class="nav-item"><a class="nav-link" href="/"> Visitantes </a></li>
-						<li class="nav-item"><a class="nav-link" href="/"> Avisos </a></li>
-						<li class="nav-item"><a class="nav-link" href="/"> Financeiro </a></li>
+								<a class="dropdown-item" href="/louvores">Lista de louvores</a>
+								<a class="dropdown-item" href="/grupos-musicas">Grupos de
+									louvores</a>
+							</div>
+						</li>
+						<li class="nav-item"><a class="nav-link" href="/visitantes">
+								Visitantes </a></li>
+						<li class="nav-item"><a class="nav-link" href="/"> Avisos
+							</a></li>
+						<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#"
+								id="financeiroDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
+								aria-expanded="false"> Financeiro </a>
+							<div class="dropdown-menu" aria-labelledby="financeiroDropdown">
+								<a class="dropdown-item" href="/cadastro-transacao-saida">Cadastro
+									de Saídas</a><a class="dropdown-item" href="/cadastro-transacao-entrada">Cadastro de
+									Entradas</a> <a class="dropdown-item" href="/dashboard">Dashboard</a>
+							</div>
+						</li>
 						<!-- 						// QUADRO DE MEMBROS? -->
-						<li class="nav-item"><a class="nav-link" href="/logout">Sair </a></li>
+						<li class="nav-item"><a class="nav-link" href="/logout">Sair
+							</a></li>
 					</ul>
 				</div>
 			</div>
 		</nav>
 	</header>
-
+	<br>
 	<div class="container">
 		<div class="jumbotron">
 			<!-- Lista de louvores -->
@@ -196,7 +254,7 @@
 				<div class="card-body">
 					<div class="row">
 						<div class="col-md-4">
-							<h4>JUBILO</h4>
+							<h4>JU</h4>
 							<ul class="list-group" id="lista-louvores-1">
 								<li th:each="louvor : ${jubiloLouvores}" class="list-group-item">
 									<div class="d-flex justify-content-between align-items-center">
@@ -222,7 +280,8 @@
 										</p>
 										<p>
 											Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
-												th:text="${louvor.linkVersao}"> Link da Versão </a>
+												th:text="${louvor.linkVersao}"> Link da
+												Versão </a>
 										</p>
 									</div>
 
@@ -231,7 +290,7 @@
 						</div>
 						<div class="col-md-4">
 							<!-- Coluna ADORACAO -->
-							<h4>ADORACAO</h4>
+							<h4>AD</h4>
 							<ul class="list-group" id="lista-louvores-2">
 								<li th:each="louvor : ${adoracaoLouvores}" class="list-group-item">
 									<!-- Repita a estrutura de cada louvor aqui, dentro da coluna ADORACAO -->
@@ -258,7 +317,8 @@
 										</p>
 										<p>
 											Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
-												th:text="${louvor.linkVersao}"> Link da Versão </a>
+												th:text="${louvor.linkVersao}"> Link da
+												Versão </a>
 										</p>
 									</div>
 								</li>
@@ -266,7 +326,7 @@
 						</div>
 						<div class="col-md-4">
 							<!-- Coluna CEIA -->
-							<h4>CEIA</h4>
+							<h4>CE</h4>
 							<ul class="list-group" id="lista-louvores-3">
 								<li th:each="louvor : ${ceiaLouvores}" class="list-group-item">
 									<!-- Repita a estrutura de cada louvor aqui, dentro da coluna CEIA -->
@@ -293,7 +353,8 @@
 										</p>
 										<p>
 											Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
-												th:text="${louvor.linkVersao}"> Link da Versão </a>
+												th:text="${louvor.linkVersao}"> Link da
+												Versão </a>
 										</p>
 									</div>
 								</li>
@@ -319,9 +380,10 @@
 									<button class="btn btn-outline-primary" type="button" data-toggle="collapse"
 										th:data-target="'#detalhes-' + ${louvor.id}" aria-expanded="false"
 										aria-controls="detalhes">+</button>
-									<button class="btn btn-outline-secondary btn-voltar" type="button"
-										th:if="${louvor.tipoLouvorEnum != null}" th:data-louvor-id="${louvor.id}"
-										th:data-louvor-origem="${louvor.tipoLouvorEnum}">Voltar</button>
+									<!-- 									<button class="btn btn-outline-secondary btn-voltar" -->
+									<!-- 										type="button" th:if="${louvor.tipoLouvorEnum != null}" -->
+									<!-- 										th:data-louvor-id="${louvor.id}" -->
+									<!-- 										th:data-louvor-origem="${louvor.tipoLouvorEnum}">-</button> -->
 								</div> <input type="hidden" class="louvor-id" th:value="${louvor.id}" />
 
 								<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
@@ -340,7 +402,8 @@
 									</p>
 									<p>
 										Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
-											th:text="${louvor.linkVersao}"> Link da Versão </a>
+											th:text="${louvor.linkVersao}"> Link da
+											Versão </a>
 									</p>
 								</div>
 							</li>
@@ -379,7 +442,8 @@
 									</p>
 									<p>
 										Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
-											th:text="${louvor.linkVersao}"> Link da Versão </a>
+											th:text="${louvor.linkVersao}"> Link da
+											Versão </a>
 									</p>
 								</div>
 							</li>
@@ -418,7 +482,8 @@
 									</p>
 									<p>
 										Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
-											th:text="${louvor.linkVersao}"> Link da Versão </a>
+											th:text="${louvor.linkVersao}"> Link da
+											Versão </a>
 									</p>
 								</div>
 							</li>
@@ -457,7 +522,8 @@
 									</p>
 									<p>
 										Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
-											th:text="${louvor.linkVersao}"> Link da Versão </a>
+											th:text="${louvor.linkVersao}"> Link da
+											Versão </a>
 									</p>
 								</div>
 							</li>
@@ -496,7 +562,8 @@
 									</p>
 									<p>
 										Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
-											th:text="${louvor.linkVersao}"> Link da Versão </a>
+											th:text="${louvor.linkVersao}"> Link da
+											Versão </a>
 									</p>
 								</div>
 							</li>
@@ -535,7 +602,8 @@
 									</p>
 									<p>
 										Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
-											th:text="${louvor.linkVersao}"> Link da Versão </a>
+											th:text="${louvor.linkVersao}"> Link da
+											Versão </a>
 									</p>
 								</div>
 							</li>
@@ -574,7 +642,8 @@
 									</p>
 									<p>
 										Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
-											th:text="${louvor.linkVersao}"> Link da Versão </a>
+											th:text="${louvor.linkVersao}"> Link da
+											Versão </a>
 									</p>
 								</div>
 							</li>
@@ -613,7 +682,8 @@
 									</p>
 									<p>
 										Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
-											th:text="${louvor.linkVersao}"> Link da Versão </a>
+											th:text="${louvor.linkVersao}"> Link da
+											Versão </a>
 									</p>
 								</div>
 							</li>
@@ -621,6 +691,10 @@
 					</div>
 				</div>
 			</div>
+		</div>.<div style="height: 100px;"></div>
+
+		<div class="footer-copyright fixed-bottom bg-dark text-center py-3">
+			<span class="text-light align-middle">| Módulo Louvor |</span>
 		</div>
 	</div>
 </body>

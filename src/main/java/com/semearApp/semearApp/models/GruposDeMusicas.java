@@ -20,14 +20,19 @@ public class GruposDeMusicas {
 	private String nome;
 
 	@ManyToMany
-    private List<Louvor> louvores;
-	
+	private List<Louvor> louvores;
+
 	public void adicionarLouvor(Louvor louvor) {
 		if (louvores == null) {
 			louvores = new ArrayList<>();
 		}
 		louvores.add(louvor);
 		louvor.getGruposDeMusicas().add(this); // Mapeamento bidirecional
+	}
+
+	public void removeLouvor(Louvor louvor) {
+		this.louvores.remove(louvor);
+		louvor.getGruposDeMusicas().remove(this);
 	}
 
 	public Long getId() {
