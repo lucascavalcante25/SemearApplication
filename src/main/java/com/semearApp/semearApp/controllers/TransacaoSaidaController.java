@@ -19,6 +19,9 @@ public class TransacaoSaidaController {
     @GetMapping("/cadastro-transacao-saida")
     public String mostrarFormularioCadastroSaide(Model model) {
         model.addAttribute("transacaoSaida", new TransacaoSaida());
+        Iterable<TransacaoSaida> transacoesSaida = transacaoSaidaRepository.findAll();
+        // Adiciona as transações de entrada ao modelo
+        model.addAttribute("transacoesSaida", transacoesSaida);
         return "financeiro/cadastro-transacao-saida";
     }
 

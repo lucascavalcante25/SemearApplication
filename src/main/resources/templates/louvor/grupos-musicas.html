@@ -1,703 +1,757 @@
 <!DOCTYPE html>
-<html lang=”pt-br” xmlns:th="http://thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-
+<html lang=”pt-br” xmlns:th="http://thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Semear</title>
+<link rel="icon" type="image/png" href="/imagens/logoSemearSmall.png">
+<link
+	href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css"
+	rel="stylesheet" />
+<link rel="stylesheet"
+	href="/draggable-1.0.0-beta.11/css/draggable-styles.css">
+<link href="css2/styles.css" rel="stylesheet" />
+<script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
+	crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+<style>
+.card {
+	margin-bottom: 20px;
+}
 
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>| App Semear |</title>
+.jumbotron {
+	margin-bottom: 30px;
+}
 
-	<!-- Bootstrap CSS -->
-	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+.group-card {
+	margin-bottom: 30px;
+}
 
-	<!-- Draggable Styles -->
-	<link rel="stylesheet" href="/draggable-1.0.0-beta.11/css/draggable-styles.css">
+.list-container {
+	margin-top: 30px;
+}
 
-	<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i,700,700i" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-	<style>
-		.card {
-			margin-bottom: 20px;
-		}
-
-		.jumbotron {
-			margin-bottom: 30px;
-		}
-
-		.group-card {
-			margin-bottom: 30px;
-		}
-
-		.list-container {
-			margin-top: 30px;
-		}
-
-		.group-title {
-			text-align: center;
-		}
-	</style>
-
-
-	<SCRIPT>
-		$(document).ready(
-			function () {
-				// Adiciona um ouvinte de evento de clique a todos os botões de expansão
-				$('.btn-outline-primary').on('click', function () {
-					// Encontre o bloco de detalhes associado usando o atributo data-target
-					var target = $($(this).data('target'));
-
-					// Inverte a visibilidade do bloco de detalhes usando o Bootstrap collapse
-					target.collapse('toggle');
-				});
-
-				// Inicializar Sortable para cada grupo
-				for (let i = 1; i <= 8; i++) {
-					let groupID = "grupo" + i;
-					Sortable.create(document.getElementById(groupID),
-						{
-							group: 'louvor-groups',
-							draggable: '.list-group-item',
-							handle: '.list-group-item',
-							sort: true,
-							chosenClass: 'active',
-							onAdd: function (evt) {
-								// Lógica a ser executada quando um item é adicionado ao grupo
-								console.log("Item adicionado ao grupo " + i
-									+ ": ", evt.item.textContent);
-
-								// Adiciona o ID do louvor diretamente ao elemento da lista
-								var louvorId = evt.item
-									.querySelector('.louvor-id').value;
-								var nomeDoGrupo = "Grupo " + i; // Altere conforme necessário
-								console.log(louvorId);
-
-								// Chame a função para salvar o louvor no grupo
-								salvarLouvorNoGrupo(louvorId, i,
-									nomeDoGrupo);
-							}
-						});
-				}
-
-				// Inicializar Sortable para cada lista de louvores
-				for (let i = 1; i <= 3; i++) { // assumindo 3 tipos de louvor (JUBILO, ADORACAO, CEIA)
-					let louvorListID = "lista-louvores-" + i;
-					Sortable.create(document.getElementById(louvorListID), {
-						group: 'louvor-groups',
-						draggable: '.list-group-item',
-						handle: '.list-group-item',
-						sort: true,
-						chosenClass: 'active',
-						onStart: function (evt) {
-							// Lógica a ser executada quando um item é arrastado da lista de louvores
-							console.log("Item iniciou o arraste: ",
-								evt.item.textContent);
-						}
-					});
-				}
-			});
-
-		$(document)
-			.ready(
-				function () {
-					$('.btn-voltar')
-						.on(
-							'click',
-							function () {
-								var louvorId = $(this).data(
-									'louvor-id');
-								var tipoLouvor = $(this).data(
-									'louvor-origem');
-								var listItemToRemove = $(this)
-									.closest('.list-group-item');
-								var listItemData = listItemToRemove
-									.html();
-
-								$
-									.ajax({
-										type: 'POST',
-										url: '/mover-para-lista-de-origem',
-										data: {
-											louvorId: louvorId,
-											tipoLouvor: tipoLouvor
-										},
-										success: function (
-											response) {
-											alert(response);
-											listItemToRemove
-												.remove();
-
-											// Adicionar o louvor de volta à lista correspondente
-											var listaCorrespondenteId = '#lista-louvores-'
-												+ obterIndiceLista(tipoLouvor);
-											if (listaCorrespondenteId !== '#lista-louvores-1') { // Verificar se não é a lista principal
-												$(
-													listaCorrespondenteId)
-													.append(
-														'<li class="list-group-item">'
-														+ listItemData
-														+ '</li>');
-											}
-										},
-										error: function (error) {
-											console
-												.error(
-													'Erro ao mover o louvor de volta:',
-													error);
-										}
-									});
-							});
-
-					function obterIndiceLista(tipoLouvor) {
-						// Mapear tipoLouvorEnum para o índice da lista
-						if (tipoLouvor === 'JUBILO') {
-							return 1;
-						} else if (tipoLouvor === 'ADORACAO') {
-							return 2;
-						} else if (tipoLouvor === 'CEIA') {
-							return 3;
-						}
-						// Adicione mais mapeamentos conforme necessário
-
-						// Caso padrão (retorna 1 por padrão)
-						return 1;
-					}
-				});
-
-		function salvarLouvorNoGrupo(louvorId, grupoId, nomeDoGrupo) {
-			console.log("Tentando salvar louvor no grupo. Louvor ID: " + louvorId
-				+ ", Grupo ID: " + grupoId);
-			// Verifica se o grupoId está definido para determinar se é um novo salvamento ou uma mudança de grupo
-			var isMudancaDeGrupo = grupoId !== undefined;
-
-			$.ajax({
-				type: 'POST',
-				url: isMudancaDeGrupo ? '/salvar-louvor-ao-grupo'
-					: '/mudar-louvor-de-grupo',
-				data: {
-					louvorId: louvorId,
-					grupoId: grupoId,
-					nomeDoGrupo: nomeDoGrupo
-				},
-				success: function (response) {
-					console.log("Resposta do servidor:", response); // Log da resposta do servidor (pode ser removido)
-					// Lógica adicional se necessário
-				},
-				error: function (error) {
-					console.error("Erro ao salvar louvor no grupo:", error);
-					// Lógica adicional de tratamento de erro, se necessário
-				}
-			});
-		}
-	</SCRIPT>
-
-
-
+.group-title {
+	text-align: center;
+}
+</style>
 </head>
-
 <body>
-
-	<header>
-		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-			<div class="container-fluid">
-				<a class="navbar-brand" href="/"> <img src="/imagens/logoSemear.png" alt="Logo da Igreja"
-						style="width: 105px; height: 30px;">
-				</a>
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-					aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-
-				<div class="collapse navbar-collapse" id="navbarNav">
-					<ul class="navbar-nav">
-						<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="louvoresDropdown"
-								role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								Louvor </a>
-							<div class="dropdown-menu" aria-labelledby="louvoresDropdown">
-								<a class="dropdown-item" href="/louvores">Lista de louvores</a>
-								<a class="dropdown-item" href="/grupos-musicas">Grupos de
-									louvores</a>
+	<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+		<!-- Navbar Brand-->
+		<a class="navbar-brand ps-3" href="/"><img
+			src="/imagens/logoSemear.png" alt="Logo da Igreja"
+			style="width: 105px; height: 30px;"></a>
+		<!-- Sidebar Toggle-->
+		<button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0"
+			id="sidebarToggle" href="#!">
+			<i class="fas fa-bars"></i>
+		</button>
+		<!-- Navbar Search-->
+		<form
+			class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+			<div class="input-group"></div>
+		</form>
+		<!-- Navbar-->
+		<ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+			<li class="nav-item dropdown"><a
+				class="nav-link dropdown-toggle" id="navbarDropdown" href="#"
+				role="button" data-bs-toggle="dropdown" aria-expanded="false"><i
+					class="fas fa-user fa-fw"></i></a>
+				<ul class="dropdown-menu dropdown-menu-end"
+					aria-labelledby="navbarDropdown">
+					<li><a class="dropdown-item" href="#!">Settings</a></li>
+					<li><a class="dropdown-item" href="#!">Activity Log</a></li>
+					<li><hr class="dropdown-divider" /></li>
+					<li><a class="dropdown-item" href="#!">Logout</a></li>
+				</ul></li>
+		</ul>
+	</nav>
+	<div id="layoutSidenav">
+		<div id="layoutSidenav_nav">
+			<nav class="sb-sidenav accordion sb-sidenav-dark"
+				id="sidenavAccordion">
+				<div class="sb-sidenav-menu">
+					<div class="nav">
+						<a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+							data-bs-target="#collapseLayouts" aria-expanded="false"
+							aria-controls="collapseLayouts">
+							<div class="sb-nav-link-icon">
+								<i class="fas fa-columns"></i>
+							</div> Louvor
+							<div class="sb-sidenav-collapse-arrow">
+								<i class="fas fa-angle-down"></i>
 							</div>
-						</li>
-						<li class="nav-item"><a class="nav-link" href="/visitantes">
-								Visitantes </a></li>
-						<li class="nav-item"><a class="nav-link" href="/"> Avisos
-							</a></li>
-						<li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#"
-								id="financeiroDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
-								aria-expanded="false"> Financeiro </a>
-							<div class="dropdown-menu" aria-labelledby="financeiroDropdown">
-								<a class="dropdown-item" href="/cadastro-transacao-saida">Cadastro
-									de Saídas</a><a class="dropdown-item" href="/cadastro-transacao-entrada">Cadastro de
-									Entradas</a> <a class="dropdown-item" href="/dashboard">Dashboard</a>
+						</a>
+						<div class="collapse" id="collapseLayouts"
+							aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+							<nav class="sb-sidenav-menu-nested nav">
+								<a class="nav-link" href="/louvores">Lista de Louvores</a> <a
+									class="nav-link" href="/grupos-musicas">Grupos de Louvores</a>
+							</nav>
+						</div>
+						<a class="nav-link" href="/visitantes">
+							<div class="sb-nav-link-icon">
+								<i class="fas fa-tachometer-alt"></i>
+							</div>Visitantes
+						</a> <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+							data-bs-target="#collapseLayout" aria-expanded="false"
+							aria-controls="collapseLayout">
+							<div class="sb-nav-link-icon">
+								<i class="fas fa-columns"></i>
+							</div> Financeiro
+							<div class="sb-sidenav-collapse-arrow">
+								<i class="fas fa-angle-down"></i>
 							</div>
-						</li>
-						<!-- 						// QUADRO DE MEMBROS? -->
-						<li class="nav-item"><a class="nav-link" href="/logout">Sair
-							</a></li>
-					</ul>
-				</div>
-			</div>
-		</nav>
-	</header>
-	<br>
-	<div class="container">
-		<div class="jumbotron">
-			<!-- Lista de louvores -->
-			<div class="card">
-				<div class="card-body">
-					<div class="row">
-						<div class="col-md-4">
-							<h4>JU</h4>
-							<ul class="list-group" id="lista-louvores-1">
-								<li th:each="louvor : ${jubiloLouvores}" class="list-group-item">
-									<div class="d-flex justify-content-between align-items-center">
-										<span th:text="${louvor.nome}"></span>
-										<button class="btn btn-outline-primary" type="button" data-toggle="collapse"
-											th:data-target="'#detalhes-' + ${louvor.id}" aria-expanded="false"
-											aria-controls="detalhes">+</button>
-									</div> <input type="hidden" class="louvor-id" th:value="${louvor.id}" />
-
-									<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
-										<!-- Detalhes do louvor -->
-										<p>
-											Artista: <span th:text="${louvor.artista}"></span>
-										</p>
-										<p>
-											Tonalidade: <span th:text="${louvor.tonalidade}"></span>
-										</p>
-										<p>
-											Andamento: <span th:text="${louvor.andamento}"></span>
-										</p>
-										<p>
-											Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
-										</p>
-										<p>
-											Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
-												th:text="${louvor.linkVersao}"> Link da
-												Versão </a>
-										</p>
-									</div>
-
-								</li>
-							</ul>
+						</a>
+						<div class="collapse" id="collapseLayout"
+							aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+							<nav class="sb-sidenav-menu-nested nav">
+								<a class="nav-link" href="/cadastro-transacao-saida">Cadastro
+									de Saídas</a> <a class="nav-link"
+									href="/cadastro-transacao-entrada">Cadastro de Entradas</a><a
+									class="nav-link" href="/dashboard">Dashboard</a>
+							</nav>
 						</div>
-						<div class="col-md-4">
-							<!-- Coluna ADORACAO -->
-							<h4>AD</h4>
-							<ul class="list-group" id="lista-louvores-2">
-								<li th:each="louvor : ${adoracaoLouvores}" class="list-group-item">
-									<!-- Repita a estrutura de cada louvor aqui, dentro da coluna ADORACAO -->
-									<div class="d-flex justify-content-between align-items-center">
-										<span th:text="${louvor.nome}"></span>
-										<button class="btn btn-outline-primary" type="button" data-toggle="collapse"
-											th:data-target="'#detalhes-' + ${louvor.id}" aria-expanded="false"
-											aria-controls="detalhes">+</button>
-									</div> <input type="hidden" class="louvor-id" th:value="${louvor.id}" />
-
-									<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
-										<!-- Detalhes do louvor -->
-										<p>
-											Artista: <span th:text="${louvor.artista}"></span>
-										</p>
-										<p>
-											Tonalidade: <span th:text="${louvor.tonalidade}"></span>
-										</p>
-										<p>
-											Andamento: <span th:text="${louvor.andamento}"></span>
-										</p>
-										<p>
-											Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
-										</p>
-										<p>
-											Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
-												th:text="${louvor.linkVersao}"> Link da
-												Versão </a>
-										</p>
-									</div>
-								</li>
-							</ul>
-						</div>
-						<div class="col-md-4">
-							<!-- Coluna CEIA -->
-							<h4>CE</h4>
-							<ul class="list-group" id="lista-louvores-3">
-								<li th:each="louvor : ${ceiaLouvores}" class="list-group-item">
-									<!-- Repita a estrutura de cada louvor aqui, dentro da coluna CEIA -->
-									<div class="d-flex justify-content-between align-items-center">
-										<span th:text="${louvor.nome}"></span>
-										<button class="btn btn-outline-primary" type="button" data-toggle="collapse"
-											th:data-target="'#detalhes-' + ${louvor.id}" aria-expanded="false"
-											aria-controls="detalhes">+</button>
-									</div> <input type="hidden" class="louvor-id" th:value="${louvor.id}" />
-
-									<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
-										<!-- Detalhes do louvor -->
-										<p>
-											Artista: <span th:text="${louvor.artista}"></span>
-										</p>
-										<p>
-											Tonalidade: <span th:text="${louvor.tonalidade}"></span>
-										</p>
-										<p>
-											Andamento: <span th:text="${louvor.andamento}"></span>
-										</p>
-										<p>
-											Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
-										</p>
-										<p>
-											Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
-												th:text="${louvor.linkVersao}"> Link da
-												Versão </a>
-										</p>
-									</div>
-								</li>
-							</ul>
-						</div>
+						<a class="nav-link" href="/lista-membros">
+							<div class="sb-nav-link-icon">
+								<i class="fas fa-tachometer-alt"></i>
+							</div>Membros
+						</a>
 					</div>
 				</div>
-			</div>
-
+			</nav>
 		</div>
-		<!-- Listas de grupos -->
-		<div class="row list-container">
-			<!-- Grupo 1 -->
-			<div class="col-md-3">
-				<div class="card group-card">
-					<div class="card-body">
-						<h3 class="group-title">Grupo 1</h3>
-						<ul class="list-group" id="grupo1">
-							<!-- Iteração sobre os louvores do grupo 1 -->
-							<li th:each="louvor : ${lg1}" class="list-group-item">
-								<div class="d-flex justify-content-between align-items-center">
-									<span th:text="${louvor.nome}"></span>
-									<button class="btn btn-outline-primary" type="button" data-toggle="collapse"
-										th:data-target="'#detalhes-' + ${louvor.id}" aria-expanded="false"
-										aria-controls="detalhes">+</button>
-									<!-- 									<button class="btn btn-outline-secondary btn-voltar" -->
-									<!-- 										type="button" th:if="${louvor.tipoLouvorEnum != null}" -->
-									<!-- 										th:data-louvor-id="${louvor.id}" -->
-									<!-- 										th:data-louvor-origem="${louvor.tipoLouvorEnum}">-</button> -->
-								</div> <input type="hidden" class="louvor-id" th:value="${louvor.id}" />
-
-								<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
-									<!-- Detalhes do louvor -->
-									<p>
-										Artista: <span th:text="${louvor.artista}"></span>
-									</p>
-									<p>
-										Tonalidade: <span th:text="${louvor.tonalidade}"></span>
-									</p>
-									<p>
-										Andamento: <span th:text="${louvor.andamento}"></span>
-									</p>
-									<p>
-										Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
-									</p>
-									<p>
-										Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
-											th:text="${louvor.linkVersao}"> Link da
-											Versão </a>
-									</p>
+		<div id="layoutSidenav_content">
+			<main>
+				<br>
+				<div class="container-fluid px-4">
+					<div class="jumbotron">
+						<!-- Lista de louvores -->
+						<div class="card">
+							<div class="card-body">
+								<div class="row">
+									<div class="col-md-4">
+										<h4>JU</h4>
+										<ul class="list-group" id="lista-louvores-1">
+											<li th:each="louvor : ${jubiloLouvores}"
+												class="list-group-item">
+												<div
+													class="d-flex justify-content-between align-items-center">
+													<span th:text="${louvor.nome}"></span>
+													<div>
+														<!-- Botão de expansão dos detalhes -->
+														<button class="btn btn-outline-primary mr-2" type="button"
+															data-toggle="collapse"
+															th:data-target="'#detalhes-' + ${louvor.id}"
+															aria-expanded="false" aria-controls="detalhes">+</button>
+														<!-- Botão de baixar cifra -->
+														<a th:href="@{/visualizarArquivo(id=${louvor.id})}"
+															target="_blank" class="btn btn-outline-danger"> <svg
+																xmlns="http://www.w3.org/2000/svg" width="16"
+																height="16" fill="currentColor" class="bi bi-file-pdf"
+																viewBox="0 0 16 16">
+        <path
+																	d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1"></path>
+        <path
+																	d="M4.603 12.087a.8.8 0 0 1-.438-.42c-.195-.388-.13-.776.08-1.102.198-.307.526-.568.897-.787a7.7 7.7 0 0 1 1.482-.645 20 20 0 0 0 1.062-2.227 7.3 7.3 0 0 1-.43-1.295c-.086-.4-.119-.796-.046-1.136.075-.354.274-.672.65-.823.192-.077.4-.12.602-.077a.7.7 0 0 1 .477.365c.088.164.12.356.127.538.007.187-.012.395-.047.614-.084.51-.27 1.134-.52 1.794a11 11 0 0 0 .98 1.686 5.8 5.8 0 0 1 1.334.05c.364.065.734.195.96.465.12.144.193.32.2.518.007.192-.047.382-.138.563a1.04 1.04 0 0 1-.354.416.86.86 0 0 1-.51.138c-.331-.014-.654-.196-.933-.417a5.7 5.7 0 0 1-.911-.95 11.6 11.6 0 0 0-1.997.406 11.3 11.3 0 0 1-1.021 1.51c-.29.35-.608.655-.926.787a.8.8 0 0 1-.58.029m1.379-1.901q-.25.115-.459.238c-.328.194-.541.383-.647.547-.094.145-.096.25-.04.361q.016.032.026.044l.035-.012c.137-.056.355-.235.635-.572a8 8 0 0 0 .45-.606m1.64-1.33a13 13 0 0 1 1.01-.193 12 12 0 0 1-.51-.858 21 21 0 0 1-.5 1.05zm2.446.45q.226.244.435.41c.24.19.407.253.498.256a.1.1 0 0 0 .07-.015.3.3 0 0 0 .094-.125.44.44 0 0 0 .059-.2.1.1 0 0 0-.026-.063c-.052-.062-.2-.152-.518-.209a4 4 0 0 0-.612-.053zM8.078 5.8a7 7 0 0 0 .2-.828q.046-.282.038-.465a.6.6 0 0 0-.032-.198.5.5 0 0 0-.145.04c-.087.035-.158.106-.196.283-.04.192-.03.469.046.822q.036.167.09.346z"></path>
+    </svg>
+														</a>
+													</div>
+												</div> <input type="hidden" class="louvor-id"
+												th:value="${louvor.id}" />
+												<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
+													<!-- Detalhes do louvor -->
+													<p>
+														Artista: <span th:text="${louvor.artista}"></span>
+													</p>
+													<p>
+														Tonalidade: <span th:text="${louvor.tonalidade}"></span>
+													</p>
+													<p>
+														Andamento: <span th:text="${louvor.andamento}"></span>
+													</p>
+													<p>
+														Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
+													</p>
+													<p>
+														Link da Versão: <a th:href="${louvor.linkVersao}"
+															target="_blank" th:text="${louvor.linkVersao}"> Link
+															da Versão </a>
+													</p>
+												</div>
+											</li>
+										</ul>
+									</div>
+									<div class="col-md-4">
+										<!-- Coluna ADORACAO -->
+										<h4>AD</h4>
+										<ul class="list-group" id="lista-louvores-2">
+											<li th:each="louvor : ${adoracaoLouvores}"
+												class="list-group-item">
+												<!-- Repita a estrutura de cada louvor aqui, dentro da coluna ADORACAO -->
+												<div
+													class="d-flex justify-content-between align-items-center">
+													<span th:text="${louvor.nome}"></span>
+													<div>
+														<!-- Botão de expansão dos detalhes -->
+														<button class="btn btn-outline-primary mr-2" type="button"
+															data-toggle="collapse"
+															th:data-target="'#detalhes-' + ${louvor.id}"
+															aria-expanded="false" aria-controls="detalhes">+</button>
+														<!-- Botão de baixar cifra -->
+														<a th:href="@{/visualizarArquivo(id=${louvor.id})}"
+															target="_blank" class="btn btn-outline-danger"> <svg
+																xmlns="http://www.w3.org/2000/svg" width="16"
+																height="16" fill="currentColor" class="bi bi-file-pdf"
+																viewBox="0 0 16 16">
+        <path
+																	d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1"></path>
+        <path
+																	d="M4.603 12.087a.8.8 0 0 1-.438-.42c-.195-.388-.13-.776.08-1.102.198-.307.526-.568.897-.787a7.7 7.7 0 0 1 1.482-.645 20 20 0 0 0 1.062-2.227 7.3 7.3 0 0 1-.43-1.295c-.086-.4-.119-.796-.046-1.136.075-.354.274-.672.65-.823.192-.077.4-.12.602-.077a.7.7 0 0 1 .477.365c.088.164.12.356.127.538.007.187-.012.395-.047.614-.084.51-.27 1.134-.52 1.794a11 11 0 0 0 .98 1.686 5.8 5.8 0 0 1 1.334.05c.364.065.734.195.96.465.12.144.193.32.2.518.007.192-.047.382-.138.563a1.04 1.04 0 0 1-.354.416.86.86 0 0 1-.51.138c-.331-.014-.654-.196-.933-.417a5.7 5.7 0 0 1-.911-.95 11.6 11.6 0 0 0-1.997.406 11.3 11.3 0 0 1-1.021 1.51c-.29.35-.608.655-.926.787a.8.8 0 0 1-.58.029m1.379-1.901q-.25.115-.459.238c-.328.194-.541.383-.647.547-.094.145-.096.25-.04.361q.016.032.026.044l.035-.012c.137-.056.355-.235.635-.572a8 8 0 0 0 .45-.606m1.64-1.33a13 13 0 0 1 1.01-.193 12 12 0 0 1-.51-.858 21 21 0 0 1-.5 1.05zm2.446.45q.226.244.435.41c.24.19.407.253.498.256a.1.1 0 0 0 .07-.015.3.3 0 0 0 .094-.125.44.44 0 0 0 .059-.2.1.1 0 0 0-.026-.063c-.052-.062-.2-.152-.518-.209a4 4 0 0 0-.612-.053zM8.078 5.8a7 7 0 0 0 .2-.828q.046-.282.038-.465a.6.6 0 0 0-.032-.198.5.5 0 0 0-.145.04c-.087.035-.158.106-.196.283-.04.192-.03.469.046.822q.036.167.09.346z"></path>
+    </svg>
+														</a>
+													</div>
+												</div> <input type="hidden" class="louvor-id"
+												th:value="${louvor.id}" />
+												<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
+													<!-- Detalhes do louvor -->
+													<p>
+														Artista: <span th:text="${louvor.artista}"></span>
+													</p>
+													<p>
+														Tonalidade: <span th:text="${louvor.tonalidade}"></span>
+													</p>
+													<p>
+														Andamento: <span th:text="${louvor.andamento}"></span>
+													</p>
+													<p>
+														Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
+													</p>
+													<p>
+														Link da Versão: <a th:href="${louvor.linkVersao}"
+															target="_blank" th:text="${louvor.linkVersao}"> Link
+															da Versão </a>
+													</p>
+												</div>
+											</li>
+										</ul>
+									</div>
+									<div class="col-md-4">
+										<!-- Coluna CEIA -->
+										<h4>CE</h4>
+										<ul class="list-group" id="lista-louvores-3">
+											<li th:each="louvor : ${ceiaLouvores}"
+												class="list-group-item">
+												<!-- Repita a estrutura de cada louvor aqui, dentro da coluna CEIA -->
+												<div
+													class="d-flex justify-content-between align-items-center">
+													<span th:text="${louvor.nome}"></span>
+													<div>
+														<!-- Botão de expansão dos detalhes -->
+														<button class="btn btn-outline-primary mr-2" type="button"
+															data-toggle="collapse"
+															th:data-target="'#detalhes-' + ${louvor.id}"
+															aria-expanded="false" aria-controls="detalhes">+</button>
+														<!-- Botão de baixar cifra -->
+														<a th:href="@{/visualizarArquivo(id=${louvor.id})}"
+															target="_blank" class="btn btn-outline-danger"> <svg
+																xmlns="http://www.w3.org/2000/svg" width="16"
+																height="16" fill="currentColor" class="bi bi-file-pdf"
+																viewBox="0 0 16 16">
+        <path
+																	d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1"></path>
+        <path
+																	d="M4.603 12.087a.8.8 0 0 1-.438-.42c-.195-.388-.13-.776.08-1.102.198-.307.526-.568.897-.787a7.7 7.7 0 0 1 1.482-.645 20 20 0 0 0 1.062-2.227 7.3 7.3 0 0 1-.43-1.295c-.086-.4-.119-.796-.046-1.136.075-.354.274-.672.65-.823.192-.077.4-.12.602-.077a.7.7 0 0 1 .477.365c.088.164.12.356.127.538.007.187-.012.395-.047.614-.084.51-.27 1.134-.52 1.794a11 11 0 0 0 .98 1.686 5.8 5.8 0 0 1 1.334.05c.364.065.734.195.96.465.12.144.193.32.2.518.007.192-.047.382-.138.563a1.04 1.04 0 0 1-.354.416.86.86 0 0 1-.51.138c-.331-.014-.654-.196-.933-.417a5.7 5.7 0 0 1-.911-.95 11.6 11.6 0 0 0-1.997.406 11.3 11.3 0 0 1-1.021 1.51c-.29.35-.608.655-.926.787a.8.8 0 0 1-.58.029m1.379-1.901q-.25.115-.459.238c-.328.194-.541.383-.647.547-.094.145-.096.25-.04.361q.016.032.026.044l.035-.012c.137-.056.355-.235.635-.572a8 8 0 0 0 .45-.606m1.64-1.33a13 13 0 0 1 1.01-.193 12 12 0 0 1-.51-.858 21 21 0 0 1-.5 1.05zm2.446.45q.226.244.435.41c.24.19.407.253.498.256a.1.1 0 0 0 .07-.015.3.3 0 0 0 .094-.125.44.44 0 0 0 .059-.2.1.1 0 0 0-.026-.063c-.052-.062-.2-.152-.518-.209a4 4 0 0 0-.612-.053zM8.078 5.8a7 7 0 0 0 .2-.828q.046-.282.038-.465a.6.6 0 0 0-.032-.198.5.5 0 0 0-.145.04c-.087.035-.158.106-.196.283-.04.192-.03.469.046.822q.036.167.09.346z"></path>
+    </svg>
+														</a>
+													</div>
+												</div> <input type="hidden" class="louvor-id"
+												th:value="${louvor.id}" />
+												<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
+													<!-- Detalhes do louvor -->
+													<p>
+														Artista: <span th:text="${louvor.artista}"></span>
+													</p>
+													s
+													<p>
+														Tonalidade: <span th:text="${louvor.tonalidade}"></span>
+													</p>
+													<p>
+														Andamento: <span th:text="${louvor.andamento}"></span>
+													</p>
+													<p>
+														Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
+													</p>
+													<p>
+														Link da Versão: <a th:href="${louvor.linkVersao}"
+															target="_blank" th:text="${louvor.linkVersao}"> Link
+															da Versão </a>
+													</p>
+												</div>
+											</li>
+										</ul>
+									</div>
 								</div>
-							</li>
-						</ul>
+							</div>
+						</div>
+					</div>
+					<!-- Listas de grupos -->
+					<div class="row list-container">
+						<!-- Grupo 1 -->
+						<div class="col-md-3">
+							<div class="card group-card">
+								<div class="card-body">
+									<h3 class="group-title">Grupo 1</h3>
+									<ul class="list-group" id="grupo1">
+										<!-- Iteração sobre os louvores do grupo 1 -->
+										<li th:each="louvor : ${lg1}" class="list-group-item">
+											<div
+												class="d-flex justify-content-between align-items-center">
+												<span th:text="${louvor.nome}"></span>
+												<div>
+													<button class="btn btn-outline-primary" type="button"
+														data-toggle="collapse"
+														th:data-target="'#detalhes-' + ${louvor.id}"
+														aria-expanded="false" aria-controls="detalhes">+</button>
+													<a th:href="@{/visualizarArquivo(id=${louvor.id})}"
+														target="_blank" class="btn btn-outline-danger ml-2"> <svg
+															xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+															fill="currentColor" class="bi bi-file-pdf"
+															viewBox="0 0 16 16">
+                <path
+																d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1"></path>
+                <path
+																d="M4.603 12.087a.8.8 0 0 1-.438-.42c-.195-.388-.13-.776.08-1.102.198-.307.526-.568.897-.787a7.7 7.7 0 0 1 1.482-.645 20 20 0 0 0 1.062-2.227 7.3 7.3 0 0 1-.43-1.295c-.086-.4-.119-.796-.046-1.136.075-.354.274-.672.65-.823.192-.077.4-.12.602-.077a.7.7 0 0 1 .477.365c.088.164.12.356.127.538.007.187-.012.395-.047.614-.084.51-.27 1.134-.52 1.794a11 11 0 0 0 .98 1.686 5.8 5.8 0 0 1 1.334.05c.364.065.734.195.96.465.12.144.193.32.2.518.007.192-.047.382-.138.563a1.04 1.04 0 0 1-.354.416.86.86 0 0 1-.51.138c-.331-.014-.654-.196-.933-.417a5.7 5.7 0 0 1-.911-.95 11.6 11.6 0 0 0-1.997.406 11.3 11.3 0 0 1-1.021 1.51c-.29.35-.608.655-.926.787a.8.8 0 0 1-.58.029m1.379-1.901q-.25.115-.459.238c-.328.194-.541.383-.647.547-.094.145-.096.25-.04.361q.016.032.026.044l.035-.012c.137-.056.355-.235.635-.572a8 8 0 0 0 .45-.606m1.64-1.33a13 13 0 0 1 1.01-.193 12 12 0 0 1-.51-.858 21 21 0 0 1-.5 1.05zm2.446.45q.226.244.435.41c.24.19.407.253.498.256a.1.1 0 0 0 .07-.015.3.3 0 0 0 .094-.125.44.44 0 0 0 .059-.2.1.1 0 0 0-.026-.063c-.052-.062-.2-.152-.518-.209a4 4 0 0 0-.612-.053zM8.078 5.8a7 7 0 0 0 .2-.828q.046-.282.038-.465a.6.6 0 0 0-.032-.198.5.5 0 0 0-.145.04c-.087.035-.158.106-.196.283-.04.192-.03.469.046.822q.036.167.09.346z"></path>
+            </svg>
+													</a>
+												</div>
+											</div> <input type="hidden" class="louvor-id"
+											th:value="${louvor.id}" />
+											<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
+												<!-- Detalhes do louvor -->
+												<p>
+													Artista: <span th:text="${louvor.artista}"></span>
+												</p>
+												<p>
+													Tonalidade: <span th:text="${louvor.tonalidade}"></span>
+												</p>
+												<p>
+													Andamento: <span th:text="${louvor.andamento}"></span>
+												</p>
+												<p>
+													Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
+												</p>
+												<p>
+													Link da Versão: <a th:href="${louvor.linkVersao}"
+														target="_blank" th:text="${louvor.linkVersao}"> Link
+														da Versão </a>
+												</p>
+											</div>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-3">
+							<div class="card group-card">
+								<div class="card-body">
+									<h3 class="group-title">Grupo 2</h3>
+									<ul class="list-group" id="grupo2">
+										<!-- Iteração sobre os louvores do grupo 2 -->
+										<li th:each="louvor : ${lg2}" class="list-group-item">
+											<div
+												class="d-flex justify-content-between align-items-center">
+												<span th:text="${louvor.nome}"></span>
+												<div>
+													<button class="btn btn-outline-primary" type="button"
+														data-toggle="collapse"
+														th:data-target="'#detalhes-' + ${louvor.id}"
+														aria-expanded="false" aria-controls="detalhes">+</button>
+													<a th:href="@{/visualizarArquivo(id=${louvor.id})}"
+														target="_blank" class="btn btn-outline-danger ml-2"> <svg
+															xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+															fill="currentColor" class="bi bi-file-pdf"
+															viewBox="0 0 16 16">
+                <path
+																d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1"></path>
+                <path
+																d="M4.603 12.087a.8.8 0 0 1-.438-.42c-.195-.388-.13-.776.08-1.102.198-.307.526-.568.897-.787a7.7 7.7 0 0 1 1.482-.645 20 20 0 0 0 1.062-2.227 7.3 7.3 0 0 1-.43-1.295c-.086-.4-.119-.796-.046-1.136.075-.354.274-.672.65-.823.192-.077.4-.12.602-.077a.7.7 0 0 1 .477.365c.088.164.12.356.127.538.007.187-.012.395-.047.614-.084.51-.27 1.134-.52 1.794a11 11 0 0 0 .98 1.686 5.8 5.8 0 0 1 1.334.05c.364.065.734.195.96.465.12.144.193.32.2.518.007.192-.047.382-.138.563a1.04 1.04 0 0 1-.354.416.86.86 0 0 1-.51.138c-.331-.014-.654-.196-.933-.417a5.7 5.7 0 0 1-.911-.95 11.6 11.6 0 0 0-1.997.406 11.3 11.3 0 0 1-1.021 1.51c-.29.35-.608.655-.926.787a.8.8 0 0 1-.58.029m1.379-1.901q-.25.115-.459.238c-.328.194-.541.383-.647.547-.094.145-.096.25-.04.361q.016.032.026.044l.035-.012c.137-.056.355-.235.635-.572a8 8 0 0 0 .45-.606m1.64-1.33a13 13 0 0 1 1.01-.193 12 12 0 0 1-.51-.858 21 21 0 0 1-.5 1.05zm2.446.45q.226.244.435.41c.24.19.407.253.498.256a.1.1 0 0 0 .07-.015.3.3 0 0 0 .094-.125.44.44 0 0 0 .059-.2.1.1 0 0 0-.026-.063c-.052-.062-.2-.152-.518-.209a4 4 0 0 0-.612-.053zM8.078 5.8a7 7 0 0 0 .2-.828q.046-.282.038-.465a.6.6 0 0 0-.032-.198.5.5 0 0 0-.145.04c-.087.035-.158.106-.196.283-.04.192-.03.469.046.822q.036.167.09.346z"></path>
+            </svg>
+													</a>
+												</div>
+											</div> <input type="hidden" class="louvor-id"
+											th:value="${louvor.id}" />
+											<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
+												<!-- Detalhes do louvor -->
+												<p>
+													Artista: <span th:text="${louvor.artista}"></span>
+												</p>
+												<p>
+													Tonalidade: <span th:text="${louvor.tonalidade}"></span>
+												</p>
+												<p>
+													Andamento: <span th:text="${louvor.andamento}"></span>
+												</p>
+												<p>
+													Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
+												</p>
+												<p>
+													Link da Versão: <a th:href="${louvor.linkVersao}"
+														target="_blank" th:text="${louvor.linkVersao}"> Link
+														da Versão </a>
+												</p>
+											</div>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-3">
+							<div class="card group-card">
+								<div class="card-body">
+									<h3 class="group-title">Grupo 3</h3>
+									<ul class="list-group" id="grupo3">
+										<!-- Iteração sobre os louvores do grupo 3 -->
+										<li th:each="louvor : ${lg3}" class="list-group-item">
+											<div
+												class="d-flex justify-content-between align-items-center">
+												<span th:text="${louvor.nome}"></span>
+												<div>
+													<button class="btn btn-outline-primary" type="button"
+														data-toggle="collapse"
+														th:data-target="'#detalhes-' + ${louvor.id}"
+														aria-expanded="false" aria-controls="detalhes">+</button>
+													<a th:href="@{/visualizarArquivo(id=${louvor.id})}"
+														target="_blank" class="btn btn-outline-danger ml-2"> <svg
+															xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+															fill="currentColor" class="bi bi-file-pdf"
+															viewBox="0 0 16 16">
+                <path
+																d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1"></path>
+                <path
+																d="M4.603 12.087a.8.8 0 0 1-.438-.42c-.195-.388-.13-.776.08-1.102.198-.307.526-.568.897-.787a7.7 7.7 0 0 1 1.482-.645 20 20 0 0 0 1.062-2.227 7.3 7.3 0 0 1-.43-1.295c-.086-.4-.119-.796-.046-1.136.075-.354.274-.672.65-.823.192-.077.4-.12.602-.077a.7.7 0 0 1 .477.365c.088.164.12.356.127.538.007.187-.012.395-.047.614-.084.51-.27 1.134-.52 1.794a11 11 0 0 0 .98 1.686 5.8 5.8 0 0 1 1.334.05c.364.065.734.195.96.465.12.144.193.32.2.518.007.192-.047.382-.138.563a1.04 1.04 0 0 1-.354.416.86.86 0 0 1-.51.138c-.331-.014-.654-.196-.933-.417a5.7 5.7 0 0 1-.911-.95 11.6 11.6 0 0 0-1.997.406 11.3 11.3 0 0 1-1.021 1.51c-.29.35-.608.655-.926.787a.8.8 0 0 1-.58.029m1.379-1.901q-.25.115-.459.238c-.328.194-.541.383-.647.547-.094.145-.096.25-.04.361q.016.032.026.044l.035-.012c.137-.056.355-.235.635-.572a8 8 0 0 0 .45-.606m1.64-1.33a13 13 0 0 1 1.01-.193 12 12 0 0 1-.51-.858 21 21 0 0 1-.5 1.05zm2.446.45q.226.244.435.41c.24.19.407.253.498.256a.1.1 0 0 0 .07-.015.3.3 0 0 0 .094-.125.44.44 0 0 0 .059-.2.1.1 0 0 0-.026-.063c-.052-.062-.2-.152-.518-.209a4 4 0 0 0-.612-.053zM8.078 5.8a7 7 0 0 0 .2-.828q.046-.282.038-.465a.6.6 0 0 0-.032-.198.5.5 0 0 0-.145.04c-.087.035-.158.106-.196.283-.04.192-.03.469.046.822q.036.167.09.346z"></path>
+            </svg>
+													</a>
+												</div>
+											</div> <input type="hidden" class="louvor-id"
+											th:value="${louvor.id}" />
+											<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
+												<!-- Detalhes do louvor -->
+												<p>
+													Artista: <span th:text="${louvor.artista}"></span>
+												</p>
+												<p>
+													Tonalidade: <span th:text="${louvor.tonalidade}"></span>
+												</p>
+												<p>
+													Andamento: <span th:text="${louvor.andamento}"></span>
+												</p>
+												<p>
+													Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
+												</p>
+												<p>
+													Link da Versão: <a th:href="${louvor.linkVersao}"
+														target="_blank" th:text="${louvor.linkVersao}"> Link
+														da Versão </a>
+												</p>
+											</div>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-3">
+							<div class="card group-card">
+								<div class="card-body">
+									<h3 class="group-title">Grupo 4</h3>
+									<ul class="list-group" id="grupo4">
+										<!-- Iteração sobre os louvores do grupo 4 -->
+										<li th:each="louvor : ${lg4}" class="list-group-item">
+											<div
+												class="d-flex justify-content-between align-items-center">
+												<span th:text="${louvor.nome}"></span>
+												<div>
+													<button class="btn btn-outline-primary" type="button"
+														data-toggle="collapse"
+														th:data-target="'#detalhes-' + ${louvor.id}"
+														aria-expanded="false" aria-controls="detalhes">+</button>
+													<a th:href="@{/visualizarArquivo(id=${louvor.id})}"
+														target="_blank" class="btn btn-outline-danger ml-2"> <svg
+															xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+															fill="currentColor" class="bi bi-file-pdf"
+															viewBox="0 0 16 16">
+                <path
+																d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1"></path>
+                <path
+																d="M4.603 12.087a.8.8 0 0 1-.438-.42c-.195-.388-.13-.776.08-1.102.198-.307.526-.568.897-.787a7.7 7.7 0 0 1 1.482-.645 20 20 0 0 0 1.062-2.227 7.3 7.3 0 0 1-.43-1.295c-.086-.4-.119-.796-.046-1.136.075-.354.274-.672.65-.823.192-.077.4-.12.602-.077a.7.7 0 0 1 .477.365c.088.164.12.356.127.538.007.187-.012.395-.047.614-.084.51-.27 1.134-.52 1.794a11 11 0 0 0 .98 1.686 5.8 5.8 0 0 1 1.334.05c.364.065.734.195.96.465.12.144.193.32.2.518.007.192-.047.382-.138.563a1.04 1.04 0 0 1-.354.416.86.86 0 0 1-.51.138c-.331-.014-.654-.196-.933-.417a5.7 5.7 0 0 1-.911-.95 11.6 11.6 0 0 0-1.997.406 11.3 11.3 0 0 1-1.021 1.51c-.29.35-.608.655-.926.787a.8.8 0 0 1-.58.029m1.379-1.901q-.25.115-.459.238c-.328.194-.541.383-.647.547-.094.145-.096.25-.04.361q.016.032.026.044l.035-.012c.137-.056.355-.235.635-.572a8 8 0 0 0 .45-.606m1.64-1.33a13 13 0 0 1 1.01-.193 12 12 0 0 1-.51-.858 21 21 0 0 1-.5 1.05zm2.446.45q.226.244.435.41c.24.19.407.253.498.256a.1.1 0 0 0 .07-.015.3.3 0 0 0 .094-.125.44.44 0 0 0 .059-.2.1.1 0 0 0-.026-.063c-.052-.062-.2-.152-.518-.209a4 4 0 0 0-.612-.053zM8.078 5.8a7 7 0 0 0 .2-.828q.046-.282.038-.465a.6.6 0 0 0-.032-.198.5.5 0 0 0-.145.04c-.087.035-.158.106-.196.283-.04.192-.03.469.046.822q.036.167.09.346z"></path>
+            </svg>
+													</a>
+												</div>
+											</div> <input type="hidden" class="louvor-id"
+											th:value="${louvor.id}" />
+											<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
+												<!-- Detalhes do louvor -->
+												<p>
+													Artista: <span th:text="${louvor.artista}"></span>
+												</p>
+												<p>
+													Tonalidade: <span th:text="${louvor.tonalidade}"></span>
+												</p>
+												<p>
+													Andamento: <span th:text="${louvor.andamento}"></span>
+												</p>
+												<p>
+													Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
+												</p>
+												<p>
+													Link da Versão: <a th:href="${louvor.linkVersao}"
+														target="_blank" th:text="${louvor.linkVersao}"> Link
+														da Versão </a>
+												</p>
+											</div>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-3">
+							<div class="card group-card">
+								<div class="card-body">
+									<h3 class="group-title">Grupo 5</h3>
+									<ul class="list-group" id="grupo5">
+										<!-- Iteração sobre os louvores do grupo 5 -->
+										<li th:each="louvor : ${lg5}" class="list-group-item">
+											<div
+												class="d-flex justify-content-between align-items-center">
+												<span th:text="${louvor.nome}"></span>
+												<div>
+													<button class="btn btn-outline-primary" type="button"
+														data-toggle="collapse"
+														th:data-target="'#detalhes-' + ${louvor.id}"
+														aria-expanded="false" aria-controls="detalhes">+</button>
+													<a th:href="@{/visualizarArquivo(id=${louvor.id})}"
+														target="_blank" class="btn btn-outline-danger ml-2"> <svg
+															xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+															fill="currentColor" class="bi bi-file-pdf"
+															viewBox="0 0 16 16">
+                <path
+																d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1"></path>
+                <path
+																d="M4.603 12.087a.8.8 0 0 1-.438-.42c-.195-.388-.13-.776.08-1.102.198-.307.526-.568.897-.787a7.7 7.7 0 0 1 1.482-.645 20 20 0 0 0 1.062-2.227 7.3 7.3 0 0 1-.43-1.295c-.086-.4-.119-.796-.046-1.136.075-.354.274-.672.65-.823.192-.077.4-.12.602-.077a.7.7 0 0 1 .477.365c.088.164.12.356.127.538.007.187-.012.395-.047.614-.084.51-.27 1.134-.52 1.794a11 11 0 0 0 .98 1.686 5.8 5.8 0 0 1 1.334.05c.364.065.734.195.96.465.12.144.193.32.2.518.007.192-.047.382-.138.563a1.04 1.04 0 0 1-.354.416.86.86 0 0 1-.51.138c-.331-.014-.654-.196-.933-.417a5.7 5.7 0 0 1-.911-.95 11.6 11.6 0 0 0-1.997.406 11.3 11.3 0 0 1-1.021 1.51c-.29.35-.608.655-.926.787a.8.8 0 0 1-.58.029m1.379-1.901q-.25.115-.459.238c-.328.194-.541.383-.647.547-.094.145-.096.25-.04.361q.016.032.026.044l.035-.012c.137-.056.355-.235.635-.572a8 8 0 0 0 .45-.606m1.64-1.33a13 13 0 0 1 1.01-.193 12 12 0 0 1-.51-.858 21 21 0 0 1-.5 1.05zm2.446.45q.226.244.435.41c.24.19.407.253.498.256a.1.1 0 0 0 .07-.015.3.3 0 0 0 .094-.125.44.44 0 0 0 .059-.2.1.1 0 0 0-.026-.063c-.052-.062-.2-.152-.518-.209a4 4 0 0 0-.612-.053zM8.078 5.8a7 7 0 0 0 .2-.828q.046-.282.038-.465a.6.6 0 0 0-.032-.198.5.5 0 0 0-.145.04c-.087.035-.158.106-.196.283-.04.192-.03.469.046.822q.036.167.09.346z"></path>
+            </svg>
+													</a>
+												</div>
+												s
+											</div> <input type="hidden" class="louvor-id"
+											th:value="${louvor.id}" />
+											<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
+												<!-- Detalhes do louvor -->
+												<p>
+													Artista: <span th:text="${louvor.artista}"></span>
+												</p>
+												<p>
+													Tonalidade: <span th:text="${louvor.tonalidade}"></span>
+												</p>
+												<p>
+													Andamento: <span th:text="${louvor.andamento}"></span>
+												</p>
+												<p>
+													Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
+												</p>
+												<p>
+													Link da Versão: <a th:href="${louvor.linkVersao}"
+														target="_blank" th:text="${louvor.linkVersao}"> Link
+														da Versão </a>
+												</p>
+											</div>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-3">
+							<div class="card group-card">
+								<div class="card-body">
+									<h3 class="group-title">Grupo 6</h3>
+									<ul class="list-group" id="grupo6">
+										<!-- Iteração sobre os louvores do grupo 6 -->
+										<li th:each="louvor : ${lg6}" class="list-group-item">
+											<div
+												class="d-flex justify-content-between align-items-center">
+												<span th:text="${louvor.nome}"></span>
+												<div>
+													<button class="btn btn-outline-primary" type="button"
+														data-toggle="collapse"
+														th:data-target="'#detalhes-' + ${louvor.id}"
+														aria-expanded="false" aria-controls="detalhes">+</button>
+													<a th:href="@{/visualizarArquivo(id=${louvor.id})}"
+														target="_blank" class="btn btn-outline-danger ml-2"> <svg
+															xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+															fill="currentColor" class="bi bi-file-pdf"
+															viewBox="0 0 16 16">
+                <path
+																d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1"></path>
+                <path
+																d="M4.603 12.087a.8.8 0 0 1-.438-.42c-.195-.388-.13-.776.08-1.102.198-.307.526-.568.897-.787a7.7 7.7 0 0 1 1.482-.645 20 20 0 0 0 1.062-2.227 7.3 7.3 0 0 1-.43-1.295c-.086-.4-.119-.796-.046-1.136.075-.354.274-.672.65-.823.192-.077.4-.12.602-.077a.7.7 0 0 1 .477.365c.088.164.12.356.127.538.007.187-.012.395-.047.614-.084.51-.27 1.134-.52 1.794a11 11 0 0 0 .98 1.686 5.8 5.8 0 0 1 1.334.05c.364.065.734.195.96.465.12.144.193.32.2.518.007.192-.047.382-.138.563a1.04 1.04 0 0 1-.354.416.86.86 0 0 1-.51.138c-.331-.014-.654-.196-.933-.417a5.7 5.7 0 0 1-.911-.95 11.6 11.6 0 0 0-1.997.406 11.3 11.3 0 0 1-1.021 1.51c-.29.35-.608.655-.926.787a.8.8 0 0 1-.58.029m1.379-1.901q-.25.115-.459.238c-.328.194-.541.383-.647.547-.094.145-.096.25-.04.361q.016.032.026.044l.035-.012c.137-.056.355-.235.635-.572a8 8 0 0 0 .45-.606m1.64-1.33a13 13 0 0 1 1.01-.193 12 12 0 0 1-.51-.858 21 21 0 0 1-.5 1.05zm2.446.45q.226.244.435.41c.24.19.407.253.498.256a.1.1 0 0 0 .07-.015.3.3 0 0 0 .094-.125.44.44 0 0 0 .059-.2.1.1 0 0 0-.026-.063c-.052-.062-.2-.152-.518-.209a4 4 0 0 0-.612-.053zM8.078 5.8a7 7 0 0 0 .2-.828q.046-.282.038-.465a.6.6 0 0 0-.032-.198.5.5 0 0 0-.145.04c-.087.035-.158.106-.196.283-.04.192-.03.469.046.822q.036.167.09.346z"></path>
+            </svg>
+													</a>
+												</div>
+											</div> <input type="hidden" class="louvor-id"
+											th:value="${louvor.id}" />
+											<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
+												<!-- Detalhes do louvor -->
+												<p>
+													Artista: <span th:text="${louvor.artista}"></span>
+												</p>
+												<p>
+													Tonalidade: <span th:text="${louvor.tonalidade}"></span>
+												</p>
+												<p>
+													Andamento: <span th:text="${louvor.andamento}"></span>
+												</p>
+												<p>
+													Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
+												</p>
+												<p>
+													Link da Versão: <a th:href="${louvor.linkVersao}"
+														target="_blank" th:text="${louvor.linkVersao}"> Link
+														da Versão </a>
+												</p>
+											</div>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-3">
+							<div class="card group-card">
+								<div class="card-body">
+									<h3 class="group-title">Grupo 7</h3>
+									<ul class="list-group" id="grupo7">
+										<!-- Iteração sobre os louvores do grupo 7 -->
+										<li th:each="louvor : ${lg7}" class="list-group-item">
+											<div
+												class="d-flex justify-content-between align-items-center">
+												<span th:text="${louvor.nome}"></span>
+												<div>
+													<button class="btn btn-outline-primary" type="button"
+														data-toggle="collapse"
+														th:data-target="'#detalhes-' + ${louvor.id}"
+														aria-expanded="false" aria-controls="detalhes">+</button>
+													<a th:href="@{/visualizarArquivo(id=${louvor.id})}"
+														target="_blank" class="btn btn-outline-danger ml-2"> <svg
+															xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+															fill="currentColor" class="bi bi-file-pdf"
+															viewBox="0 0 16 16">
+                <path
+																d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1"></path>
+                <path
+																d="M4.603 12.087a.8.8 0 0 1-.438-.42c-.195-.388-.13-.776.08-1.102.198-.307.526-.568.897-.787a7.7 7.7 0 0 1 1.482-.645 20 20 0 0 0 1.062-2.227 7.3 7.3 0 0 1-.43-1.295c-.086-.4-.119-.796-.046-1.136.075-.354.274-.672.65-.823.192-.077.4-.12.602-.077a.7.7 0 0 1 .477.365c.088.164.12.356.127.538.007.187-.012.395-.047.614-.084.51-.27 1.134-.52 1.794a11 11 0 0 0 .98 1.686 5.8 5.8 0 0 1 1.334.05c.364.065.734.195.96.465.12.144.193.32.2.518.007.192-.047.382-.138.563a1.04 1.04 0 0 1-.354.416.86.86 0 0 1-.51.138c-.331-.014-.654-.196-.933-.417a5.7 5.7 0 0 1-.911-.95 11.6 11.6 0 0 0-1.997.406 11.3 11.3 0 0 1-1.021 1.51c-.29.35-.608.655-.926.787a.8.8 0 0 1-.58.029m1.379-1.901q-.25.115-.459.238c-.328.194-.541.383-.647.547-.094.145-.096.25-.04.361q.016.032.026.044l.035-.012c.137-.056.355-.235.635-.572a8 8 0 0 0 .45-.606m1.64-1.33a13 13 0 0 1 1.01-.193 12 12 0 0 1-.51-.858 21 21 0 0 1-.5 1.05zm2.446.45q.226.244.435.41c.24.19.407.253.498.256a.1.1 0 0 0 .07-.015.3.3 0 0 0 .094-.125.44.44 0 0 0 .059-.2.1.1 0 0 0-.026-.063c-.052-.062-.2-.152-.518-.209a4 4 0 0 0-.612-.053zM8.078 5.8a7 7 0 0 0 .2-.828q.046-.282.038-.465a.6.6 0 0 0-.032-.198.5.5 0 0 0-.145.04c-.087.035-.158.106-.196.283-.04.192-.03.469.046.822q.036.167.09.346z"></path>
+            </svg>
+													</a>
+												</div>
+											</div> <input type="hidden" class="louvor-id"
+											th:value="${louvor.id}" />
+											<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
+												<!-- Detalhes do louvor -->
+												<p>
+													Artista: <span th:text="${louvor.artista}"></span>
+												</p>
+												<p>
+													Tonalidade: <span th:text="${louvor.tonalidade}"></span>
+												</p>
+												<p>
+													Andamento: <span th:text="${louvor.andamento}"></span>
+												</p>
+												<p>
+													Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
+												</p>
+												<p>
+													Link da Versão: <a th:href="${louvor.linkVersao}"
+														target="_blank" th:text="${louvor.linkVersao}"> Link
+														da Versão </a>
+												</p>
+											</div>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-3">
+							<div class="card group-card">
+								<div class="card-body">
+									<h3 class="group-title">Grupo 8</h3>
+									<ul class="list-group" id="grupo8">
+										<!-- Iteração sobre os louvores do grupo 8 -->
+										<li th:each="louvor : ${lg8}" class="list-group-item">
+											<div
+												class="d-flex justify-content-between align-items-center">
+												<span th:text="${louvor.nome}"></span>
+												<div>
+													<button class="btn btn-outline-primary" type="button"
+														data-toggle="collapse"
+														th:data-target="'#detalhes-' + ${louvor.id}"
+														aria-expanded="false" aria-controls="detalhes">+</button>
+													<a th:href="@{/visualizarArquivo(id=${louvor.id})}"
+														target="_blank" class="btn btn-outline-danger ml-2"> <svg
+															xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+															fill="currentColor" class="bi bi-file-pdf"
+															viewBox="0 0 16 16">
+                <path
+																d="M4 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm0 1h8a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1"></path>
+                <path
+																d="M4.603 12.087a.8.8 0 0 1-.438-.42c-.195-.388-.13-.776.08-1.102.198-.307.526-.568.897-.787a7.7 7.7 0 0 1 1.482-.645 20 20 0 0 0 1.062-2.227 7.3 7.3 0 0 1-.43-1.295c-.086-.4-.119-.796-.046-1.136.075-.354.274-.672.65-.823.192-.077.4-.12.602-.077a.7.7 0 0 1 .477.365c.088.164.12.356.127.538.007.187-.012.395-.047.614-.084.51-.27 1.134-.52 1.794a11 11 0 0 0 .98 1.686 5.8 5.8 0 0 1 1.334.05c.364.065.734.195.96.465.12.144.193.32.2.518.007.192-.047.382-.138.563a1.04 1.04 0 0 1-.354.416.86.86 0 0 1-.51.138c-.331-.014-.654-.196-.933-.417a5.7 5.7 0 0 1-.911-.95 11.6 11.6 0 0 0-1.997.406 11.3 11.3 0 0 1-1.021 1.51c-.29.35-.608.655-.926.787a.8.8 0 0 1-.58.029m1.379-1.901q-.25.115-.459.238c-.328.194-.541.383-.647.547-.094.145-.096.25-.04.361q.016.032.026.044l.035-.012c.137-.056.355-.235.635-.572a8 8 0 0 0 .45-.606m1.64-1.33a13 13 0 0 1 1.01-.193 12 12 0 0 1-.51-.858 21 21 0 0 1-.5 1.05zm2.446.45q.226.244.435.41c.24.19.407.253.498.256a.1.1 0 0 0 .07-.015.3.3 0 0 0 .094-.125.44.44 0 0 0 .059-.2.1.1 0 0 0-.026-.063c-.052-.062-.2-.152-.518-.209a4 4 0 0 0-.612-.053zM8.078 5.8a7 7 0 0 0 .2-.828q.046-.282.038-.465a.6.6 0 0 0-.032-.198.5.5 0 0 0-.145.04c-.087.035-.158.106-.196.283-.04.192-.03.469.046.822q.036.167.09.346z"></path>
+            </svg>
+													</a>
+												</div>
+											</div> <input type="hidden" class="louvor-id"
+											th:value="${louvor.id}" />
+											<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
+												<!-- Detalhes do louvor -->
+												<p>
+													Artista: <span th:text="${louvor.artista}"></span>
+												</p>
+												<p>
+													Tonalidade: <span th:text="${louvor.tonalidade}"></span>
+												</p>
+												<p>
+													Andamento: <span th:text="${louvor.andamento}"></span>
+												</p>
+												<p>
+													Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
+												</p>
+												<p>
+													Link da Versão: <a th:href="${louvor.linkVersao}"
+														target="_blank" th:text="${louvor.linkVersao}"> Link
+														da Versão </a>
+												</p>
+											</div>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
-			</div>
-
-			<div class="col-md-3">
-				<div class="card group-card">
-					<div class="card-body">
-						<h3 class="group-title">Grupo 2</h3>
-						<ul class="list-group" id="grupo2">
-							<!-- Iteração sobre os louvores do grupo 2 -->
-							<li th:each="louvor : ${lg2}" class="list-group-item">
-								<div class="d-flex justify-content-between align-items-center">
-									<span th:text="${louvor.nome}"></span>
-									<button class="btn btn-outline-primary" type="button" data-toggle="collapse"
-										th:data-target="'#detalhes-' + ${louvor.id}" aria-expanded="false"
-										aria-controls="detalhes">+</button>
-								</div> <input type="hidden" class="louvor-id" th:value="${louvor.id}" />
-
-								<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
-									<!-- Detalhes do louvor -->
-									<p>
-										Artista: <span th:text="${louvor.artista}"></span>
-									</p>
-									<p>
-										Tonalidade: <span th:text="${louvor.tonalidade}"></span>
-									</p>
-									<p>
-										Andamento: <span th:text="${louvor.andamento}"></span>
-									</p>
-									<p>
-										Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
-									</p>
-									<p>
-										Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
-											th:text="${louvor.linkVersao}"> Link da
-											Versão </a>
-									</p>
-								</div>
-							</li>
-						</ul>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-md-3">
-				<div class="card group-card">
-					<div class="card-body">
-						<h3 class="group-title">Grupo 3</h3>
-						<ul class="list-group" id="grupo3">
-							<!-- Iteração sobre os louvores do grupo 3 -->
-							<li th:each="louvor : ${lg3}" class="list-group-item">
-								<div class="d-flex justify-content-between align-items-center">
-									<span th:text="${louvor.nome}"></span>
-									<button class="btn btn-outline-primary" type="button" data-toggle="collapse"
-										th:data-target="'#detalhes-' + ${louvor.id}" aria-expanded="false"
-										aria-controls="detalhes">+</button>
-								</div> <input type="hidden" class="louvor-id" th:value="${louvor.id}" />
-
-								<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
-									<!-- Detalhes do louvor -->
-									<p>
-										Artista: <span th:text="${louvor.artista}"></span>
-									</p>
-									<p>
-										Tonalidade: <span th:text="${louvor.tonalidade}"></span>
-									</p>
-									<p>
-										Andamento: <span th:text="${louvor.andamento}"></span>
-									</p>
-									<p>
-										Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
-									</p>
-									<p>
-										Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
-											th:text="${louvor.linkVersao}"> Link da
-											Versão </a>
-									</p>
-								</div>
-							</li>
-						</ul>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-md-3">
-				<div class="card group-card">
-					<div class="card-body">
-						<h3 class="group-title">Grupo 4</h3>
-						<ul class="list-group" id="grupo4">
-							<!-- Iteração sobre os louvores do grupo 4 -->
-							<li th:each="louvor : ${lg4}" class="list-group-item">
-								<div class="d-flex justify-content-between align-items-center">
-									<span th:text="${louvor.nome}"></span>
-									<button class="btn btn-outline-primary" type="button" data-toggle="collapse"
-										th:data-target="'#detalhes-' + ${louvor.id}" aria-expanded="false"
-										aria-controls="detalhes">+</button>
-								</div> <input type="hidden" class="louvor-id" th:value="${louvor.id}" />
-
-								<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
-									<!-- Detalhes do louvor -->
-									<p>
-										Artista: <span th:text="${louvor.artista}"></span>
-									</p>
-									<p>
-										Tonalidade: <span th:text="${louvor.tonalidade}"></span>
-									</p>
-									<p>
-										Andamento: <span th:text="${louvor.andamento}"></span>
-									</p>
-									<p>
-										Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
-									</p>
-									<p>
-										Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
-											th:text="${louvor.linkVersao}"> Link da
-											Versão </a>
-									</p>
-								</div>
-							</li>
-						</ul>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-md-3">
-				<div class="card group-card">
-					<div class="card-body">
-						<h3 class="group-title">Grupo 5</h3>
-						<ul class="list-group" id="grupo5">
-							<!-- Iteração sobre os louvores do grupo 5 -->
-							<li th:each="louvor : ${lg5}" class="list-group-item">
-								<div class="d-flex justify-content-between align-items-center">
-									<span th:text="${louvor.nome}"></span>
-									<button class="btn btn-outline-primary" type="button" data-toggle="collapse"
-										th:data-target="'#detalhes-' + ${louvor.id}" aria-expanded="false"
-										aria-controls="detalhes">+</button>
-								</div> <input type="hidden" class="louvor-id" th:value="${louvor.id}" />
-
-								<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
-									<!-- Detalhes do louvor -->
-									<p>
-										Artista: <span th:text="${louvor.artista}"></span>
-									</p>
-									<p>
-										Tonalidade: <span th:text="${louvor.tonalidade}"></span>
-									</p>
-									<p>
-										Andamento: <span th:text="${louvor.andamento}"></span>
-									</p>
-									<p>
-										Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
-									</p>
-									<p>
-										Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
-											th:text="${louvor.linkVersao}"> Link da
-											Versão </a>
-									</p>
-								</div>
-							</li>
-						</ul>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-md-3">
-				<div class="card group-card">
-					<div class="card-body">
-						<h3 class="group-title">Grupo 6</h3>
-						<ul class="list-group" id="grupo6">
-							<!-- Iteração sobre os louvores do grupo 6 -->
-							<li th:each="louvor : ${lg6}" class="list-group-item">
-								<div class="d-flex justify-content-between align-items-center">
-									<span th:text="${louvor.nome}"></span>
-									<button class="btn btn-outline-primary" type="button" data-toggle="collapse"
-										th:data-target="'#detalhes-' + ${louvor.id}" aria-expanded="false"
-										aria-controls="detalhes">+</button>
-								</div> <input type="hidden" class="louvor-id" th:value="${louvor.id}" />
-
-								<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
-									<!-- Detalhes do louvor -->
-									<p>
-										Artista: <span th:text="${louvor.artista}"></span>
-									</p>
-									<p>
-										Tonalidade: <span th:text="${louvor.tonalidade}"></span>
-									</p>
-									<p>
-										Andamento: <span th:text="${louvor.andamento}"></span>
-									</p>
-									<p>
-										Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
-									</p>
-									<p>
-										Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
-											th:text="${louvor.linkVersao}"> Link da
-											Versão </a>
-									</p>
-								</div>
-							</li>
-						</ul>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-md-3">
-				<div class="card group-card">
-					<div class="card-body">
-						<h3 class="group-title">Grupo 7</h3>
-						<ul class="list-group" id="grupo7">
-							<!-- Iteração sobre os louvores do grupo 7 -->
-							<li th:each="louvor : ${lg7}" class="list-group-item">
-								<div class="d-flex justify-content-between align-items-center">
-									<span th:text="${louvor.nome}"></span>
-									<button class="btn btn-outline-primary" type="button" data-toggle="collapse"
-										th:data-target="'#detalhes-' + ${louvor.id}" aria-expanded="false"
-										aria-controls="detalhes">+</button>
-								</div> <input type="hidden" class="louvor-id" th:value="${louvor.id}" />
-
-								<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
-									<!-- Detalhes do louvor -->
-									<p>
-										Artista: <span th:text="${louvor.artista}"></span>
-									</p>
-									<p>
-										Tonalidade: <span th:text="${louvor.tonalidade}"></span>
-									</p>
-									<p>
-										Andamento: <span th:text="${louvor.andamento}"></span>
-									</p>
-									<p>
-										Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
-									</p>
-									<p>
-										Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
-											th:text="${louvor.linkVersao}"> Link da
-											Versão </a>
-									</p>
-								</div>
-							</li>
-						</ul>
-					</div>
-				</div>
-			</div>
-
-			<div class="col-md-3">
-				<div class="card group-card">
-					<div class="card-body">
-						<h3 class="group-title">Grupo 8</h3>
-						<ul class="list-group" id="grupo8">
-							<!-- Iteração sobre os louvores do grupo 8 -->
-							<li th:each="louvor : ${lg8}" class="list-group-item">
-								<div class="d-flex justify-content-between align-items-center">
-									<span th:text="${louvor.nome}"></span>
-									<button class="btn btn-outline-primary" type="button" data-toggle="collapse"
-										th:data-target="'#detalhes-' + ${louvor.id}" aria-expanded="false"
-										aria-controls="detalhes">+</button>
-								</div> <input type="hidden" class="louvor-id" th:value="${louvor.id}" />
-
-								<div class="collapse" th:id="'detalhes-' + ${louvor.id}">
-									<!-- Detalhes do louvor -->
-									<p>
-										Artista: <span th:text="${louvor.artista}"></span>
-									</p>
-									<p>
-										Tonalidade: <span th:text="${louvor.tonalidade}"></span>
-									</p>
-									<p>
-										Andamento: <span th:text="${louvor.andamento}"></span>
-									</p>
-									<p>
-										Tipo de Louvor: <span th:text="${louvor.tipoLouvorEnum}"></span>
-									</p>
-									<p>
-										Link da Versão: <a th:href="${louvor.linkVersao}" target="_blank"
-											th:text="${louvor.linkVersao}"> Link da
-											Versão </a>
-									</p>
-								</div>
-							</li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</div>.<div style="height: 100px;"></div>
-
-		<div class="footer-copyright fixed-bottom bg-dark text-center py-3">
-			<span class="text-light align-middle">| Módulo Louvor |</span>
+			</main>
 		</div>
 	</div>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+		crossorigin="anonymous"></script>
+	<script src="js/scripts-grupos-musicas.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"
+		crossorigin="anonymous"></script>
+	<script src="assets/demo/chart-area-demo.js"></script>
+	<script src="assets/demo/chart-bar-demo.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
+		crossorigin="anonymous"></script>
 </body>
-
-
 </html>

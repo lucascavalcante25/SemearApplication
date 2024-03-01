@@ -16,7 +16,7 @@ FROM openjdk:11-jdk-slim
 
 WORKDIR /app
 
-COPY --from=build /app/target/AppRH-0.0.1-SNAPSHOT.jar appSemear.jar
+COPY --from=build /app/target/AppSemear-0.0.1-SNAPSHOT.jar appSemear.jar
 
 EXPOSE 8080
 

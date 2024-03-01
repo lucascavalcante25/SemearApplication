@@ -1,6 +1,7 @@
 package com.semearApp.semearApp.models;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -12,6 +13,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 
 import com.semearApp.semearApp.enums.TipoLouvorEnum;
@@ -31,6 +33,9 @@ public class Louvor implements Serializable {
 	private Integer andamento;
 	private String linkVersao;
 
+	@Lob
+	private byte[] arquivo;
+
 	@Column(columnDefinition = "boolean default false")
 	private boolean noGrupo;
 
@@ -43,8 +48,7 @@ public class Louvor implements Serializable {
 	private boolean ativo;
 
 	@ManyToMany(mappedBy = "louvores")
-    private List<GruposDeMusicas> gruposDeMusicas;
-	
+	private List<GruposDeMusicas> gruposDeMusicas;
 
 	public boolean isNoGrupo() {
 		return noGrupo;
@@ -126,10 +130,22 @@ public class Louvor implements Serializable {
 		this.gruposDeMusicas = gruposDeMusicas;
 	}
 
+	public byte[] getArquivo() {
+		return arquivo;
+	}
+
+	public void setArquivo(byte[] arquivo) {
+		this.arquivo = arquivo;
+	}
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(andamento, artista, ativo, gruposDeMusicas, id, linkVersao, noGrupo, nome, tipoLouvorEnum,
-				tonalidade);
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(arquivo);
+		result = prime * result + Objects.hash(andamento, artista, ativo, gruposDeMusicas, id, linkVersao, noGrupo,
+				nome, tipoLouvorEnum, tonalidade);
+		return result;
 	}
 
 	@Override
@@ -141,8 +157,9 @@ public class Louvor implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Louvor other = (Louvor) obj;
-		return Objects.equals(andamento, other.andamento) && Objects.equals(artista, other.artista)
-				&& ativo == other.ativo && Objects.equals(gruposDeMusicas, other.gruposDeMusicas) && id == other.id
+		return Objects.equals(andamento, other.andamento) && Arrays.equals(arquivo, other.arquivo)
+				&& Objects.equals(artista, other.artista) && ativo == other.ativo
+				&& Objects.equals(gruposDeMusicas, other.gruposDeMusicas) && id == other.id
 				&& Objects.equals(linkVersao, other.linkVersao) && noGrupo == other.noGrupo
 				&& Objects.equals(nome, other.nome) && Objects.equals(tipoLouvorEnum, other.tipoLouvorEnum)
 				&& Objects.equals(tonalidade, other.tonalidade);

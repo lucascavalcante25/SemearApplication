@@ -13,17 +13,17 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder builder) throws Exception {
 
-		builder.inMemoryAuthentication().withUser("admin").password("{noop}admin").roles("USER").and().withUser("root")
-				.password("{noop}root").roles("ADMIN");
+		builder.inMemoryAuthentication().withUser("Semear").password("{noop}Semear@2024").roles("USER").and()
+				.withUser("root").password("{noop}root").roles("ADMIN");
 
 	}
 
 	// Método que configura quais seções do site podem ser acessadas com e sem login
+	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-
-		http.authorizeRequests().antMatchers("/").permitAll().antMatchers("/vagas**").permitAll().antMatchers("/home**")
-				.permitAll().anyRequest().authenticated().and().formLogin().permitAll().and().logout().permitAll().and()
-				.csrf().disable();
+		http.authorizeRequests().antMatchers("/").permitAll().anyRequest().authenticated().and().formLogin()
+				.loginPage("/login") // Especifica a página de login personalizada
+				.permitAll().and().logout().permitAll().and().csrf().disable();
 	}
 
 }

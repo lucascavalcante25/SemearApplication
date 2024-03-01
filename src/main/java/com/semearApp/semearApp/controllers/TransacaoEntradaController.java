@@ -20,6 +20,9 @@ public class TransacaoEntradaController {
     @GetMapping("/cadastro-transacao-entrada")
     public String mostrarFormularioCadastroEntrada(Model model) {
         model.addAttribute("transacaoEntrada", new TransacaoEntrada());
+        Iterable<TransacaoEntrada> transacoesEntrada = transacaoEntradaRepository.findAll();
+        // Adiciona as transações de entrada ao modelo
+        model.addAttribute("transacoesEntrada", transacoesEntrada);
         return "financeiro/cadastro-transacao-entrada";
     }
 
@@ -28,4 +31,5 @@ public class TransacaoEntradaController {
     	transacaoEntradaRepository.save(transacaoEntrada);
         return "redirect:/cadastro-transacao-entrada";
     }
+    
 }

@@ -9,11 +9,11 @@
 		<version>2.6.1</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.AppRH</groupId>
-	<artifactId>AppRH</artifactId>
+	<groupId>com.AppSemear</groupId>
+	<artifactId>AppSemear</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>AppRH</name>
-	<description>Projeto AppRH</description>
+	<name>AppSemear</name>
+	<description>Projeto AppSemear</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>

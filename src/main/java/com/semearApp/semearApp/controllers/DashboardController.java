@@ -31,26 +31,29 @@ public class DashboardController {
 
 	@GetMapping("/dashboard")
 	public ModelAndView dashboard(Model model) {
-
 		ModelAndView mv = new ModelAndView("dashboard/dashboard");
 
 		// Busca todas as transações de entrada e saída e converte para lista
-	    Iterable<TransacaoEntrada> iterableTransacoesEntrada = transacaoEntradaRepository.findAll();
-	    List<TransacaoEntrada> transacoesEntrada = new ArrayList<>();
-	    iterableTransacoesEntrada.forEach(transacoesEntrada::add);
+		Iterable<TransacaoEntrada> iterableTransacoesEntrada = transacaoEntradaRepository.findAll();
+		List<TransacaoEntrada> transacoesEntrada = new ArrayList<>();
+		iterableTransacoesEntrada.forEach(transacoesEntrada::add);
 
-	    Iterable<TransacaoSaida> iterableTransacoesSaida = transacaoSaidaRepository.findAll();
-	    List<TransacaoSaida> transacoesSaida = new ArrayList<>();
-	    iterableTransacoesSaida.forEach(transacoesSaida::add);
-	    // Consolida os dados mês a mês
-	    Map<String, Double> consolidadoEntrada = consolidarPorMesEntrada(transacoesEntrada);
-	    Map<String, Double> consolidadoSaida = consolidarPorMesSaida(transacoesSaida);
+		Iterable<TransacaoSaida> iterableTransacoesSaida = transacaoSaidaRepository.findAll();
+		List<TransacaoSaida> transacoesSaida = new ArrayList<>();
+		iterableTransacoesSaida.forEach(transacoesSaida::add);
 
-	    // Adiciona os dados consolidados ao modelo
-	    mv.addObject("consolidadoEntrada", consolidadoEntrada);
-	    mv.addObject("consolidadoSaida", consolidadoSaida);
+		// Consolida os dados mês a mês
+		Map<String, Double> consolidadoEntrada = consolidarPorMesEntrada(transacoesEntrada);
+		Map<String, Double> consolidadoSaida = consolidarPorMesSaida(transacoesSaida);
+		// Calcula o saldo acumulado para cada mês
+		Map<String, Double> saldoAcumulado = calcularSaldoAcumulado(consolidadoEntrada, consolidadoSaida);
 
-	    return mv;
+		// Adiciona os dados consolidados ao modelo
+		mv.addObject("consolidadoEntrada", consolidadoEntrada);
+		mv.addObject("consolidadoSaida", consolidadoSaida);
+		mv.addObject("saldoAcumulado", saldoAcumulado);
+		
+		return mv;
 	}
 
 	private Map<String, Double> consolidarPorMesEntrada(List<TransacaoEntrada> transacoes) {
@@ -83,6 +86,20 @@ public class DashboardController {
 		}
 
 		return consolidado;
+	}
+
+	private Map<String, Double> calcularSaldoAcumulado(Map<String, Double> consolidadoEntrada, Map<String, Double> consolidadoSaida) {
+	    Map<String, Double> saldoAcumulado = new HashMap<>();
+	    double saldo = 0.0;
+
+	    for (String mesAno : consolidadoEntrada.keySet()) {
+	        double entrada = consolidadoEntrada.getOrDefault(mesAno, 0.0);
+	        double saida = consolidadoSaida.getOrDefault(mesAno, 0.0);
+	        saldo += entrada - saida;
+	        saldoAcumulado.put(mesAno, saldo);
+	    }
+
+	    return saldoAcumulado;
 	}
 
 }

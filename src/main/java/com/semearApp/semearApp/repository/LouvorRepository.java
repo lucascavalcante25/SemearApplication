@@ -17,5 +17,5 @@ public interface LouvorRepository extends CrudRepository<Louvor, Long>{
 	List<Louvor>findByNomes(String nome);
 	
 	List<Louvor> findByAtivoTrue();
-
+	
 }
