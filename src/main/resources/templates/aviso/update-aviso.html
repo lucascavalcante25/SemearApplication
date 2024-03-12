@@ -113,117 +113,43 @@
 			<main>
 				<br>
 				<div class="container-fluid px-4">
-					<h2>Editar Membro</h2>
-					<form action="/salvar-edicao-membro" method="post"
-						id="editarMembroForm">
+					<h2>Editar Aviso</h2>
+					<form action="/salvar-edicao-aviso" method="post"
+						id="editarAvisoForm">
 						<!-- Campos do formulário -->
-						<input type="hidden" name="id" th:value="${membro.id}" />
+						<input type="hidden" name="id" th:value="${aviso.id}" />
 						<!-- Campo oculto para o ID -->
 						<div class="row mb-3">
 							<div class="col-md-6">
-								<label class="form-label">Nome Completo:</label> <input
-									class="form-control" type="text" name="nomeCompleto"
-									th:value="${membro.nomeCompleto}" required>
+								<label class="form-label">Titulo:</label> <input
+									class="form-control" type="text" name="titulo"
+									th:value="${aviso.titulo}" required>
 							</div>
 							<div class="col-md-6">
-								<label class="form-label">Gênero:</label><br>
+								<label class="form-label">Descricao:</label> <input
+									class="form-control" type="text" name="descricao"
+									th:value="${aviso.descricao}" required>
+							</div>
+							<div class="col-md-6">
+								<label class="form-label">Padrão:</label><br>
 								<div class="form-check form-check-inline">
-									<input class="form-check-input" type="radio" name="genero"
-										id="masculino" value="Masculino"
-										th:checked="${membro.genero == 'Masculino'}"> <label
-										class="form-check-label" for="masculino">Masculino</label>
+									<input class="form-check-input" type="radio" name="avisoPadrao"
+										id="true" value="true"
+										th:checked="${aviso.avisoPadrao} == true"> <label
+										class="form-check-label" for="true">Sim</label>
 								</div>
 								<div class="form-check form-check-inline">
-									<input class="form-check-input" type="radio" name="genero"
-										id="feminino" value="Feminino"
-										th:checked="${membro.genero == 'Feminino'}"> <label
-										class="form-check-label" for="feminino">Feminino</label>
-								</div>
-							</div>
-						</div>
-						<div class="row mb-3">
-							<div class="col-md-6">
-								<label class="form-label">Data de Nascimento:</label> <input
-									class="form-control" type="text" id="campoData"
-									name="dataNascimento" th:value="${membro.dataNascimento}">
-							</div>
-							<div class="col-md-6">
-								<label class="form-label">Endereço:</label> <input
-									class="form-control" type="text" name="endereco"
-									th:value="${membro.endereco}">
-							</div>
-						</div>
-						<div class="row mb-3">
-							<div class="col-md-6">
-								<label class="form-label">Telefone:</label> <input
-									class="form-control" type="text" id="campoTelefone"
-									name="telefone" th:value="${membro.telefone}" required>
-							</div>
-							<div class="col-md-6">
-								<label class="form-label">Telefone para Emergência:</label> <input
-									class="form-control" type="text" id="campoTelefoneEmergencia"
-									name="telefoneEmergencia"
-									th:value="${membro.telefoneEmergencia}" required>
-							</div>
-						</div>
-						<div class="row mb-3">
-							<div class="col-md-6">
-								<label class="form-label">E-mail:</label> <input
-									class="form-control" type="email" name="email"
-									th:value="${membro.email}">
-							</div>
-							<div class="col-md-6">
-								<label class="form-label">Data de Batismo:</label> <input
-									class="form-control" type="text" name="dataBatismo"
-									th:value="${membro.dataBatismo}" id="campoDataBatismo">
-							</div>
-						</div>
-						<div class="row mb-3">
-							<div class="col-md-6">
-								<label class="form-label">Cargo/Ministério:</label> <input
-									class="form-control" type="text" name="cargoMinisterio"
-									th:value="${membro.cargoMinisterio}">
-							</div>
-							<div class="col-md-6">
-								<label class="form-label">Estado Civil:</label><br>
-								<div class="form-check form-check-inline">
-									<input class="form-check-input" type="radio" name="estadoCivil"
-										id="casado" value="Casado(a)"
-										th:checked="${membro.estadoCivil == 'Casado(a)'}"> <label
-										class="form-check-label" for="casado">Casado(a)</label>
-								</div>
-								<div class="form-check form-check-inline">
-									<input class="form-check-input" type="radio" name="estadoCivil"
-										id="divorciado" value="Divorciado(a)"
-										th:checked="${membro.estadoCivil == 'Divorciado(a)'}">
-									<label class="form-check-label" for="divorciado">Divorciado(a)</label>
-								</div>
-								<div class="form-check form-check-inline">
-									<input class="form-check-input" type="radio" name="estadoCivil"
-										id="separado" value="Separado(a)"
-										th:checked="${membro.estadoCivil == 'Separado(a)'}"> <label
-										class="form-check-label" for="separado">Separado(a)</label>
-								</div>
-								<div class="form-check form-check-inline">
-									<input class="form-check-input" type="radio" name="estadoCivil"
-										id="solteiro" value="Solteiro(a)"
-										th:checked="${membro.estadoCivil == 'Solteiro(a)'}"> <label
-										class="form-check-label" for="solteiro">Solteiro(a)</label>
-								</div>
-								<div class="form-check form-check-inline">
-									<input class="form-check-input" type="radio" name="estadoCivil"
-										id="viuvo" value="Viuvo(a)"
-										th:checked="${membro.estadoCivil == 'Viuvo(a)'}"> <label
-										class="form-check-label" for="viuvo">Viuvo(a)</label>
+									<input class="form-check-input" type="radio" name="avisoPadrao"
+										id="false" value="false"
+										th:checked="${aviso.avisoPadrao} == false"> <label
+										class="form-check-label" for="false">Não</label>
 								</div>
 							</div>
 						</div>
-						<div class="row mb-3">
-							<div class="col-md-12">
-								<label class="form-label">Observações:</label>
-								<textarea class="form-control" name="observacoes" rows="4"
-									cols="50" th:text="${membro.observacoes}"></textarea>
-							</div>
+						<div class="col-md-6">
+							<label class="form-label">Data do Evento/Aviso:</label> <input
+								class="form-control" type="text" id="campoData" name="data"
+								th:value="${aviso.data}">
 						</div>
 						<div class="row mb-3">
 							<div class="col-md-12">
@@ -239,7 +165,7 @@
 		<script
 			src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
 			crossorigin="anonymous"></script>
-		<script src="js/scripts-lista-membros.js"></script>
+		<script src="js/scripts-lista-aviso.js"></script>
 		<script
 			src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"
 			crossorigin="anonymous"></script>

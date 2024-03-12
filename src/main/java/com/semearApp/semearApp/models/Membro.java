@@ -7,8 +7,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 @Entity
 public class Membro {
 
@@ -41,10 +39,10 @@ public class Membro {
 		return senha;
 	}
 
-	public void setSenha(String senha) {
-		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-		this.senha = passwordEncoder.encode(senha);
-	}
+//	public void setSenha(String senha) {
+//		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+//		this.senha = passwordEncoder.encode(senha);
+//	}
 
 	public Long getId() {
 		return id;
