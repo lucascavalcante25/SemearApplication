@@ -11,7 +11,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.semearApp.semearApp.models.Aviso;
@@ -75,7 +75,7 @@ public class IndexController {
 	}
 
 	// GET
-	@RequestMapping("/")
+	@GetMapping("/")
 	public ModelAndView abrirIndex() {
 		ModelAndView mv = new ModelAndView("index");
 		// Obtém os membros aniversariantes do mês atual
