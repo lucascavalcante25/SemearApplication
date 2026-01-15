@@ -1,3 +1,5 @@
+// Removido: navegação agora é feita via JSF/PrimeFaces
+/*
 package com.semearApp.semearApp.controllers;
 
 import java.io.IOException;
@@ -5,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ContentDisposition;
@@ -414,3 +416,4 @@ public class LouvorController {
 	}
 
 }
+*/

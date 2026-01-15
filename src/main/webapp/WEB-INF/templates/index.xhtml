@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Semear</title>
+    <link rel="icon" type="image/png" href="#{resource['images/logoSemearSmall.png']}"/>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet"/>
+    <link href="#{resource['css/styles.css']}" rel="stylesheet"/>
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</h:head>
+<h:body>
+    <ui:composition template="/WEB-INF/templates/layout.xhtml">
+        <ui:define name="content">
+            <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+                <a class="navbar-brand ps-3" href="/">
+                    <img src="#{resource['images/logoSemear.png']}" alt="Logo da Igreja" style="width: 105px; height: 30px;"/>
+                </a>
+                <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" type="button">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+                    <div class="input-group"></div>
+                </form>
+            </nav>
+            <div id="layoutSidenav">
+                <div id="layoutSidenav_nav">
+                    <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                        <div class="sb-sidenav-menu">
+                            <div class="nav">
+                                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
+                                    <div class="sb-nav-link-icon">
+                                        <i class="fas fa-music"></i>
+                                    </div> Louvor
+                                    <div class="sb-sidenav-collapse-arrow">
+                                        <i class="fas fa-angle-down"></i>
+                                    </div>
+                                </a>
+                                <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                                    <nav class="sb-sidenav-menu-nested nav">
+                                        <a class="nav-link" href="/louvores">
+                                            <div class="sb-nav-link-icon">
+                                                <i class="fas fa-music"></i>
+                                            </div> Lista de Louvores
+                                        </a>
+                                        <a class="nav-link" href="/grupos-musicas">
+                                            <div class="sb-nav-link-icon">
+                                                <i class="fas fa-users"></i>
+                                            </div> Grupos de Louvores
+                                        </a>
+                                    </nav>
+                                </div>
+                                <a class="nav-link" href="/visitantes">
+                                    <div class="sb-nav-link-icon">
+                                        <i class="fas fa-solid fa-street-view"></i>
+                                    </div> Visitantes
+                                </a>
+                                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayout" aria-expanded="false" aria-controls="collapseLayout">
+                                    <div class="sb-nav-link-icon">
+                                        <i class="fas fa-money-bill-alt"></i>
+                                    </div> Financeiro
+                                    <div class="sb-sidenav-collapse-arrow">
+                                        <i class="fas fa-angle-down"></i>
+                                    </div>
+                                </a>
+                                <div class="collapse" id="collapseLayout" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                                    <nav class="sb-sidenav-menu-nested nav">
+                                        <a class="nav-link" href="/cadastro-transacao-saida">
+                                            <div class="sb-nav-link-icon">
+                                                <i class="fas fa-arrow-down"></i>
+                                            </div> Cadastro de Saídas
+                                        </a>
+                                        <a class="nav-link" href="/cadastro-transacao-entrada">
+                                            <div class="sb-nav-link-icon">
+                                                <i class="fas fa-arrow-up"></i>
+                                            </div> Cadastro de Entradas
+                                        </a>
+                                        <a class="nav-link" href="/dashboard">
+                                            <div class="sb-nav-link-icon">
+                                                <i class="fas fa-chart-line"></i>
+                                            </div> Dashboard
+                                        </a>
+                                    </nav>
+                                </div>
+                                <a class="nav-link" href="/lista-membros">
+                                    <div class="sb-nav-link-icon">
+                                        <i class="fas fa-users"></i>
+                                    </div> Membros
+                                </a>
+                                <a class="nav-link" href="/lista-aviso">
+                                    <div class="sb-nav-link-icon">
+                                        <i class="fas fa-bullhorn"></i>
+                                    </div> Avisos
+                                </a>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+                <div id="layoutSidenav_content">
+                    <main>
+                        <div class="container-fluid px-4">
+                            <div class="row">
+                                <div class="col-xl-6">
+                                    <div class="card text-center">
+                                        <div class="card-header">
+                                            <h3>Aniversariantes do Mês</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <ui:repeat value="#{dashboardBean.aniversariantes}" var="membro">
+                                                <p>#{membro.nomeCompleto} - #{membro.dataNascimento}</p>
+                                            </ui:repeat>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-6">
+                                    <div class="card text-center">
+                                        <div class="card-header">
+                                            <h3>Avisos</h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <ui:repeat value="#{dashboardBean.avisosDoMes}" var="aviso">
+                                                <p>#{aviso.titulo}</p>
+                                                <p>#{aviso.descricao}</p>
+                                                <p>#{aviso.data}</p>
+                                            </ui:repeat>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <h1 class="mt-4">Dashboard Financeiro</h1>
+                            <ol class="breadcrumb mb-4">
+                                <li class="breadcrumb-item active">Gráfico mês a mês entradas, saídas e saldo final em caixa.</li>
+                            </ol>
+                            <div class="row">
+                                <div class="col-xl-12">
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <i class="fas fa-chart-bar me-1"></i> Gráfico de Barras
+                                        </div>
+                                        <div class="card-body">
+                                            <canvas id="myBarChart" width="100%" height="40"></canvas>
+                                            <script>
+                                                var consolidadoEntrada = "#{dashboardBean.consolidadoEntradaJson != null ? dashboardBean.consolidadoEntradaJson : '[]'}";
+                                                var consolidadoSaida = "#{dashboardBean.consolidadoSaidaJson != null ? dashboardBean.consolidadoSaidaJson : '[]'}";
+                                                var saldoAcumulado = "#{dashboardBean.saldoAcumuladoJson != null ? dashboardBean.saldoAcumuladoJson : '[]'}";
+                                            </script>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            </div>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+            <script src="#{resource['js/scripts.js']}"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+            <script src="#{resource['assets/demo/chart-area-demo.js']}"></script>
+            <script src="#{resource['assets/demo/chart-bar-demo.js']}"></script>
+            <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+            <script src="#{resource['js/datatables-simple-demo.js']}"></script>
+        </ui:define>
+    </ui:composition>
+</h:body>
+</html>

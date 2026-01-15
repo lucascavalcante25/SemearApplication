@@ -1,3 +1,5 @@
+// Removido: navegação agora é feita via JSF/PrimeFaces
+/*
 package com.semearApp.semearApp.controllers;
 
 import java.time.LocalDate;
@@ -65,3 +67,4 @@ public class AvisoController {
 	}
 
 }
+*/

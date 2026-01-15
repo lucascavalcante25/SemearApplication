@@ -1,6 +1,6 @@
 package com.semearApp.semearApp;
 
-import javax.sql.DataSource;
+import javax.sql.DataSource; // Corrigida a importação para javax.sql
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

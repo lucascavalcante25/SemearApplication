@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Semear</title>
+    <link rel="icon" type="image/png" href="#{resource['images/logoSemearSmall.png']}"/>
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet"/>
+    <link href="#{resource['css/styles.css']}" rel="stylesheet"/>
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>.text-orange { color: #FF8C00; }</style>
+</h:head>
+<h:body>
+<ui:composition template="/WEB-INF/templates/layout.xhtml">
+    <ui:define name="content">
+        <h1>Lista de Louvores</h1>
+        <p:dataTable value="#{louvorBean.louvores}" var="louvor" paginator="true" rows="10" responsiveLayout="scroll">
+            <p:column headerText="Nome">
+                <h:outputText value="#{louvor.nome}"/>
+            </p:column>
+            <p:column headerText="Grupo">
+                <h:outputText value="#{louvor.grupo}"/>
+            </p:column>
+            <p:column headerText="Ativo">
+                <h:outputText value="#{louvor.ativo ? 'Sim' : 'Não'}"/>
+            </p:column>
+            <p:column headerText="Ações">
+                <p:button value="Editar" outcome="update-louvor.xhtml">
+                    <f:param name="id" value="#{louvor.id}"/>
+                </p:button>
+            </p:column>
+        </p:dataTable>
+    </ui:define>
+</ui:composition>
+</h:body>
+</html>

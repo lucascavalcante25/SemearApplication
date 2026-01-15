@@ -1,3 +1,5 @@
+// Removido: navegação agora é feita via JSF/PrimeFaces
+/*
 package com.semearApp.semearApp.controllers;
 
 import java.math.BigDecimal;
@@ -81,7 +83,7 @@ public class IndexController {
 		// Obtém os membros aniversariantes do mês atual
 		List<Membro> aniversariantes = getAniversariantesDoMes();
 		List<Aviso> avisosDoMes = getAvisos();
-		
+
 		// Busca todas as transações de entrada e saída e converte para lista
 		Iterable<TransacaoEntrada> iterableTransacoesEntrada = transacaoEntradaRepository.findAll();
 		List<TransacaoEntrada> transacoesEntrada = new ArrayList<>();
@@ -155,3 +157,4 @@ public class IndexController {
 	}
 
 }
+*/

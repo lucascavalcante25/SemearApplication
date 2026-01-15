@@ -10,4 +10,3 @@ public class SemearApp {
 		SpringApplication.run(SemearApp.class, args);
 	}
 }
-

@@ -1,3 +1,5 @@
+// Removido: navegação agora é feita via JSF/PrimeFaces
+/*
 package com.semearApp.semearApp.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,6 @@ public class TransacaoEntradaController {
     @Autowired
     private TransacaoEntradaRepository transacaoEntradaRepository;
 
-    
     @GetMapping("/cadastro-transacao-entrada")
     public String mostrarFormularioCadastroEntrada(Model model) {
         model.addAttribute("transacaoEntrada", new TransacaoEntrada());
@@ -31,5 +32,5 @@ public class TransacaoEntradaController {
     	transacaoEntradaRepository.save(transacaoEntrada);
         return "redirect:/cadastro-transacao-entrada";
     }
-    
 }
+*/

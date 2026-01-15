@@ -1,3 +1,5 @@
+// Removido: navegação agora é feita via JSF/PrimeFaces
+/*
 package com.semearApp.semearApp.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,8 +60,6 @@ public class BuscaController {
 		}
 		
 		mv.addObject("mensagem", mensagem);
-		
-		return mv;
 	}
-
 }
+*/

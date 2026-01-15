@@ -1,3 +1,5 @@
+// Removido: navegação agora é feita via JSF/PrimeFaces
+/*
 package com.semearApp.semearApp.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +38,6 @@ public class MembroController {
 	}
 
 	// GET que chama o FORM de edição do membro
-	@RequestMapping("/editar-membro")
 	public ModelAndView editarMembro(@RequestParam long id) {
 		Membro membro = membroRepository.findById(id);
 		ModelAndView mv = new ModelAndView("membro/update-membro");
@@ -61,3 +62,4 @@ public class MembroController {
 	}
 
 }
+*/
