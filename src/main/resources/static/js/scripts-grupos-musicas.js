@@ -7,6 +7,16 @@
 // Scripts
 // 
 
+function initTooltips(root) {
+	if (!window.bootstrap) {
+		return;
+	}
+	var scope = root || document;
+	scope.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function(el) {
+		new bootstrap.Tooltip(el);
+	});
+}
+
 window.addEventListener('DOMContentLoaded', event => {
 
 	// Toggle the side navigation
@@ -27,12 +37,16 @@ window.addEventListener('DOMContentLoaded', event => {
 
 $(document).ready(function() {
 	// Adiciona um ouvinte de evento de clique a todos os botões de expansão
-	$('.btn-outline-primary').on('click', function() {
-		// Encontre o bloco de detalhes associado usando o atributo data-target
-		var target = $($(this).data('target'));
-
-		// Inverte a visibilidade do bloco de detalhes usando o Bootstrap collapse
-		target.collapse('toggle');
+	$(document).on('click', '.btn-outline-primary', function() {
+		var targetSelector = $(this).attr('data-bs-target') || $(this).data('target');
+		if (!targetSelector) {
+			return;
+		}
+		var target = document.querySelector(targetSelector);
+		if (!target || !window.bootstrap) {
+			return;
+		}
+		bootstrap.Collapse.getOrCreateInstance(target).toggle();
 	});
 
 	// Inicializar Sortable para cada grupo
@@ -81,7 +95,7 @@ $(document).ready(function() {
 });
 
 $(document).ready(function() {
-	$('.btn-voltar').on('click', function() {
+	$(document).on('click', '.btn-voltar', function() {
 		var louvorId = $(this).data('louvor-id');
 		var tipoLouvor = $(this).data('louvor-origem');
 		var listItemToRemove = $(this).closest('.list-group-item');
@@ -101,9 +115,8 @@ $(document).ready(function() {
 
 				// Adicionar o louvor de volta à lista correspondente
 				var listaCorrespondenteId = '#lista-louvores-' + obterIndiceLista(tipoLouvor);
-				if (listaCorrespondenteId !== '#lista-louvores-1') { // Verificar se não é a lista principal
-					$(listaCorrespondenteId).append('<li class="list-group-item">' + listItemData + '</li>');
-				}
+				$(listaCorrespondenteId).append('<li class="list-group-item">' + listItemData + '</li>');
+				initTooltips(document.querySelector(listaCorrespondenteId));
 			},
 			error: function(error) {
 				console.error('Erro ao mover o louvor de volta:', error);
@@ -153,9 +166,10 @@ function salvarLouvorNoGrupo(louvorId, grupoId, nomeDoGrupo) {
 	});
 }
 
- $(document).ready(function(){
-        $('[data-toggle="tooltip"]').tooltip();
-    });
+$(document).ready(function(){
+	// Tooltips (Bootstrap 5)
+	initTooltips();
+});
 
 
 

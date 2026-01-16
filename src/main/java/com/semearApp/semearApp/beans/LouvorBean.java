@@ -2,6 +2,7 @@ package com.semearApp.semearApp.beans;
 
 import com.semearApp.semearApp.models.Louvor;
 import com.semearApp.semearApp.repository.LouvorRepository;
+import com.semearApp.semearApp.enums.TipoLouvorEnum;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.context.annotation.Scope;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @Scope("session")
@@ -74,5 +76,27 @@ public class LouvorBean implements Serializable {
 
     public void setLouvor(Louvor louvor) {
         this.louvor = louvor;
+    }
+
+    public TipoLouvorEnum[] getTiposLouvor() {
+        return TipoLouvorEnum.values();
+    }
+
+    private List<Louvor> filtrarPorTipo(TipoLouvorEnum tipo) {
+        return louvores.stream()
+                .filter(l -> l.getTipoLouvorEnum() != null && l.getTipoLouvorEnum().contains(tipo))
+                .collect(Collectors.toList());
+    }
+
+    public List<Louvor> getJubiloLouvores() {
+        return filtrarPorTipo(TipoLouvorEnum.JUBILO);
+    }
+
+    public List<Louvor> getAdoracaoLouvores() {
+        return filtrarPorTipo(TipoLouvorEnum.ADORACAO);
+    }
+
+    public List<Louvor> getCeiaLouvores() {
+        return filtrarPorTipo(TipoLouvorEnum.CEIA);
     }
 }

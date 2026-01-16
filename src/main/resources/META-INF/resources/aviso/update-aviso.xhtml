@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/layout.xhtml">
+    <ui:define name="title">Editar Aviso</ui:define>
+
+    <ui:define name="head">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    </ui:define>
+
+    <ui:define name="content">
+        <br />
+        <div class="container-fluid px-4">
+            <h2>Editar Aviso</h2>
+            <h:form id="editarAvisoForm">
+                <h:inputHidden value="#{avisoBean.aviso.id}" />
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Titulo:</label>
+                        <p:inputText value="#{avisoBean.aviso.titulo}" styleClass="form-control" required="true" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Descricao:</label>
+                        <p:inputText value="#{avisoBean.aviso.descricao}" styleClass="form-control" required="true" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Padrão:</label>
+                        <p:selectOneMenu value="#{avisoBean.aviso.avisoPadrao}" styleClass="form-control">
+                            <f:selectItem itemLabel="Sim" itemValue="true" />
+                            <f:selectItem itemLabel="Não" itemValue="false" />
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Data do Evento/Aviso:</label>
+                    <p:inputText value="#{avisoBean.aviso.data}" styleClass="form-control" id="campoData" />
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <p:commandButton value="Salvar Alterações" action="#{avisoBean.salvar}" ajax="false"
+                                         styleClass="btn btn-primary" />
+                        <h:link value="Voltar" outcome="/aviso/lista-aviso.xhtml" styleClass="btn btn-secondary" />
+                    </div>
+                </div>
+            </h:form>
+        </div>
+    </ui:define>
+
+    <ui:define name="scripts">
+        <script src="#{request.contextPath}/js/scripts-lista-aviso.js"></script>
+    </ui:define>
+</ui:composition>

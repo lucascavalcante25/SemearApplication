@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/layout.xhtml">
+    <ui:define name="title">Cadastrar Louvor</ui:define>
+
+    <ui:define name="content">
+        <br />
+        <div class="container-fluid px-4">
+            <h2>Cadastrar Louvor</h2>
+            <h:form>
+                <div class="form-group">
+                    <label><b>Nome:</b></label>
+                    <p:inputText value="#{louvorBean.louvor.nome}" styleClass="form-control" required="true" />
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label><b>Artista/Grupo</b></label>
+                            <p:inputText value="#{louvorBean.louvor.artista}" styleClass="form-control" />
+                        </div>
+                    </div>
+                    <div class="col">
+                        <label><b>Tonalidade</b></label>
+                        <p:inputText value="#{louvorBean.louvor.tonalidade}" styleClass="form-control" required="true" />
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label><b>Tipo de Louvor</b></label>
+                            <p:selectManyCheckbox value="#{louvorBean.louvor.tipoLouvorEnum}" layout="responsive">
+                                <f:selectItems value="#{louvorBean.tiposLouvor}" var="tipo"
+                                               itemLabel="#{tipo.descricao}" itemValue="#{tipo}" />
+                            </p:selectManyCheckbox>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label><b>Andamento</b></label>
+                            <p:inputText value="#{louvorBean.louvor.andamento}" styleClass="form-control" />
+                            <small class="form-text text-muted"><i>* BPM</i></small>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <label><b>Link da versão</b></label>
+                        <p:inputText value="#{louvorBean.louvor.linkVersao}" styleClass="form-control" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-check">
+                            <p:selectBooleanCheckbox value="#{louvorBean.louvor.ativo}" />
+                            <label class="form-check-label"><b>Ativo</b></label>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <p:commandButton value="Salvar" action="#{louvorBean.salvar}" ajax="false"
+                                 styleClass="btn btn-success" icon="pi pi-save" />
+                <h:link value="Voltar" outcome="/louvor/lista-louvor.xhtml" styleClass="btn btn-secondary" />
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/layout.xhtml">
+    <ui:define name="title">Editar Membro</ui:define>
+
+    <ui:define name="head">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    </ui:define>
+
+    <ui:define name="content">
+        <br />
+        <div class="container-fluid px-4">
+            <h2>Editar Membro</h2>
+            <h:form id="editarMembroForm">
+                <h:inputHidden value="#{membroBean.membro.id}" />
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Nome Completo:</label>
+                        <p:inputText value="#{membroBean.membro.nomeCompleto}" styleClass="form-control" required="true" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Gênero:</label>
+                        <p:selectOneMenu value="#{membroBean.membro.genero}" styleClass="form-control">
+                            <f:selectItem itemLabel="Masculino" itemValue="Masculino" />
+                            <f:selectItem itemLabel="Feminino" itemValue="Feminino" />
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Data de Nascimento:</label>
+                        <p:inputText value="#{membroBean.membro.dataNascimento}" styleClass="form-control" id="campoData" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Endereço:</label>
+                        <p:inputText value="#{membroBean.membro.endereco}" styleClass="form-control" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Telefone:</label>
+                        <p:inputText value="#{membroBean.membro.telefone}" styleClass="form-control" id="campoTelefone" required="true" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Telefone para Emergência:</label>
+                        <p:inputText value="#{membroBean.membro.telefoneEmergencia}" styleClass="form-control" id="campoTelefoneEmergencia" required="true" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">E-mail:</label>
+                        <p:inputText value="#{membroBean.membro.email}" styleClass="form-control" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Data de Batismo:</label>
+                        <p:inputText value="#{membroBean.membro.dataBatismo}" styleClass="form-control" id="campoDataBatismo" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Cargo/Ministério:</label>
+                        <p:inputText value="#{membroBean.membro.cargoMinisterio}" styleClass="form-control" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Estado Civil:</label>
+                        <p:selectOneMenu value="#{membroBean.membro.estadoCivil}" styleClass="form-control">
+                            <f:selectItem itemLabel="Casado(a)" itemValue="Casado(a)" />
+                            <f:selectItem itemLabel="Divorciado(a)" itemValue="Divorciado(a)" />
+                            <f:selectItem itemLabel="Separado(a)" itemValue="Separado(a)" />
+                            <f:selectItem itemLabel="Solteiro(a)" itemValue="Solteiro(a)" />
+                            <f:selectItem itemLabel="Viuvo(a)" itemValue="Viuvo(a)" />
+                        </p:selectOneMenu>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label class="form-label">Observações:</label>
+                        <p:inputTextarea value="#{membroBean.membro.observacoes}" styleClass="form-control" rows="4" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <p:commandButton value="Salvar Alterações" action="#{membroBean.salvar}" ajax="false"
+                                         styleClass="btn btn-primary" />
+                        <h:link value="Voltar" outcome="/membro/lista-membros.xhtml" styleClass="btn btn-secondary" />
+                    </div>
+                </div>
+            </h:form>
+        </div>
+    </ui:define>
+
+    <ui:define name="scripts">
+        <script src="#{request.contextPath}/js/scripts-lista-membros.js"></script>
+    </ui:define>
+</ui:composition>

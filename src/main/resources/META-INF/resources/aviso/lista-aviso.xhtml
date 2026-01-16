@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/layout.xhtml">
+    <ui:define name="title">Avisos</ui:define>
+
+    <ui:define name="head">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    </ui:define>
+
+    <ui:define name="content">
+        <br />
+        <div class="container-fluid px-4">
+            <div class="row">
+                <div class="col">
+                    <div class="card-body">
+                        <div id="cadastroAvisoForm" style="display: none;">
+                            <h2>Formulário de Cadastro de Avisos</h2>
+                            <h:form>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Titulo:</label>
+                                        <p:inputText value="#{avisoBean.aviso.titulo}" styleClass="form-control" required="true" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Padrão:</label>
+                                        <p:selectOneMenu value="#{avisoBean.aviso.avisoPadrao}" styleClass="form-control">
+                                            <f:selectItem itemLabel="Sim" itemValue="true" />
+                                            <f:selectItem itemLabel="Não" itemValue="false" />
+                                        </p:selectOneMenu>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Descricao:</label>
+                                        <p:inputText value="#{avisoBean.aviso.descricao}" styleClass="form-control" required="true" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Data de Evento/Aviso:</label>
+                                        <p:inputText value="#{avisoBean.aviso.data}" styleClass="form-control" id="campoData" />
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <p:commandButton value="Salvar" action="#{avisoBean.salvar}" ajax="false"
+                                                         styleClass="btn btn-primary" />
+                                        <button class="btn btn-secondary" type="button" onclick="ocultarFormCadastro()">Sair</button>
+                                    </div>
+                                </div>
+                            </h:form>
+                        </div>
+                        <div id="botoesCadastro">
+                            <button class="btn btn-success" type="button" onclick="mostrarFormCadastro()">Incluir Aviso</button>
+                        </div>
+                        <br />
+                        <input class="form-control" id="myInput" type="text" placeholder="Buscar Aviso na lista..." />
+                        <br />
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <div class="card text-center">
+                                <div class="card-header card-title">
+                                    <h3>Lista de Avisos</h3>
+                                </div>
+                                <div class="table-responsive">
+                                    <h:form>
+                                        <table id="tabelaAvisos" class="table table-striped">
+                                            <thead>
+                                            <tr>
+                                                <th>Titulo</th>
+                                                <th>Descricao</th>
+                                                <th>Data</th>
+                                                <th>Padrao</th>
+                                                <th>Ações</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="myTableAviso">
+                                            <ui:repeat value="#{avisoBean.avisos}" var="aviso">
+                                                <tr>
+                                                    <td><h:outputText value="#{aviso.titulo}" /></td>
+                                                    <td><h:outputText value="#{aviso.descricao}" /></td>
+                                                    <td><h:outputText value="#{aviso.data}" /></td>
+                                                    <td>
+                                                        <h:outputText value="#{aviso.avisoPadrao ? 'Sim' : 'Não'}" />
+                                                    </td>
+                                                    <td>
+                                                        <h:commandLink action="#{avisoBean.remover(aviso.id)}"
+                                                                       styleClass="waves-effect waves-light text-danger">
+                                                            <i class="fas fa-trash-alt fa-lg"></i>
+                                                        </h:commandLink>
+                                                        <h:commandLink action="#{avisoBean.editar(aviso.id)}"
+                                                                       styleClass="waves-effect waves-light text-primary">
+                                                            <i class="fas fa-edit fa-lg"></i>
+                                                        </h:commandLink>
+                                                    </td>
+                                                </tr>
+                                            </ui:repeat>
+                                            </tbody>
+                                        </table>
+                                    </h:form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+
+    <ui:define name="scripts">
+        <script src="#{request.contextPath}/js/scripts-lista-aviso.js"></script>
+    </ui:define>
+</ui:composition>

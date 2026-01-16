@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/layout.xhtml">
+    <ui:define name="title">Cadastro de Entradas</ui:define>
+
+    <ui:define name="head">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    </ui:define>
+
+    <ui:define name="content">
+        <br />
+        <div class="container-fluid px-4">
+            <h:form id="form-transacao">
+                <div class="mb-3">
+                    <label class="form-label">Descrição:</label>
+                    <p:inputText value="#{transacaoEntradaBean.transacao.descricao}" styleClass="form-control" required="true" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Valor:</label>
+                    <p:inputNumber value="#{transacaoEntradaBean.transacao.valor}" styleClass="form-control" required="true"
+                                   decimalPlaces="2" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Data:</label>
+                    <p:inputText value="#{transacaoEntradaBean.transacao.data}" styleClass="form-control" required="true" />
+                </div>
+                <p:commandButton value="Cadastrar" action="#{transacaoEntradaBean.salvar}" ajax="false"
+                                 styleClass="btn btn-primary" />
+                <button type="button" class="btn btn-secondary" onclick="limparCampos()">Limpar</button>
+            </h:form>
+            <br />
+            <div>
+                <h4>Transações de Entrada</h4>
+                <ul>
+                    <ui:repeat value="#{transacaoEntradaBean.transacoes}" var="transacao">
+                        <li>
+                            <h:outputText value="#{transacao.data}" /> -
+                            <h:outputText value="#{transacao.descricao}" /> -
+                            <h:outputText value="#{transacao.valor}" />
+                        </li>
+                    </ui:repeat>
+                </ul>
+            </div>
+        </div>
+    </ui:define>
+
+    <ui:define name="scripts">
+        <script src="#{request.contextPath}/js/scripts-transacao-entrada.js"></script>
+    </ui:define>
+</ui:composition>

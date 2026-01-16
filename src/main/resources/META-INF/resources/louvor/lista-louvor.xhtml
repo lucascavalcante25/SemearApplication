@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="/layout.xhtml">
+    <ui:define name="title">Louvores</ui:define>
+
+    <ui:define name="head">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <style>
+            .text-orange {
+                color: #FF8C00;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <br />
+        <div class="container-fluid px-4">
+            <div class="row">
+                <div class="col">
+                    <div class="card-body">
+                        <button type="button" class="btn btn-success" id="btnCadastrar">
+                            <i class="fas fa-list"></i> Novo
+                        </button>
+                        <div id="formularioContainer" style="display: none;">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="card-header card-title">
+                                            <h3>Cadastrar Louvor</h3>
+                                        </div>
+                                        <h:form enctype="multipart/form-data">
+                                            <div class="form-group">
+                                                <label><b>Nome:</b></label>
+                                                <p:inputText value="#{louvorBean.louvor.nome}" styleClass="form-control"
+                                                             placeholder="Título do louvor" required="true" />
+                                            </div>
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="form-group">
+                                                        <label><b>Artista/Grupo</b></label>
+                                                        <p:inputText value="#{louvorBean.louvor.artista}" styleClass="form-control"
+                                                                     placeholder="Exemplo: Vineyard" />
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <label><b>Tonalidade</b></label>
+                                                    <p:inputText value="#{louvorBean.louvor.tonalidade}" styleClass="form-control"
+                                                                 placeholder="Exemplo: G ou D#" required="true" />
+                                                </div>
+                                                <div class="col">
+                                                    <div class="form-group">
+                                                        <label><b>Tipo de Louvor</b></label>
+                                                        <p:selectManyCheckbox value="#{louvorBean.louvor.tipoLouvorEnum}" layout="responsive">
+                                                            <f:selectItems value="#{louvorBean.tiposLouvor}" var="tipo"
+                                                                           itemLabel="#{tipo.descricao}" itemValue="#{tipo}" />
+                                                        </p:selectManyCheckbox>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="form-group">
+                                                        <label><b>Andamento</b></label>
+                                                        <p:inputText value="#{louvorBean.louvor.andamento}" styleClass="form-control"
+                                                                     placeholder="Numérico" />
+                                                        <small class="form-text text-muted"><i>* BPM</i></small>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <label><b>Link da versão</b></label>
+                                                    <p:inputText value="#{louvorBean.louvor.linkVersao}" styleClass="form-control"
+                                                                 placeholder="Link do Youtube" />
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="form-check">
+                                                        <p:selectBooleanCheckbox value="#{louvorBean.louvor.ativo}" />
+                                                        <label class="form-check-label"><b>Ativo</b></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <p:commandButton value="Salvar" action="#{louvorBean.salvar}" ajax="false"
+                                                             styleClass="btn btn-success" icon="pi pi-save" />
+                                            <button id="btnSairCadastro" type="button" class="btn btn-warning">
+                                                <i class="fas fa-sign-out-alt"></i> Sair
+                                            </button>
+                                        </h:form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br /><br />
+                        <input class="form-control" id="myInput" type="text" placeholder="Buscar louvor na lista..." />
+                        <br />
+                    </div>
+                    <div class="card text-center">
+                        <div class="card-header card-title">
+                            <h3>Lista de Louvores</h3>
+                        </div>
+                        <div class="table-responsive">
+                            <h:form>
+                                <table id="tabelaLouvores" class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col" style="width: 20%;">Nome</th>
+                                        <th scope="col" style="width: 15%;">Artista</th>
+                                        <th scope="col" style="width: 5%;">Tonalidade</th>
+                                        <th scope="col" style="width: 5%;">Andamento</th>
+                                        <th scope="col" style="width: 10%;">Tipo de Louvor</th>
+                                        <th scope="col" style="width: 5%;">Ativo</th>
+                                        <th scope="col" style="width: 20%;">Link da versão</th>
+                                        <th scope="col" style="width: 10%;">Ações</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="myTable">
+                                    <ui:repeat value="#{louvorBean.louvores}" var="louvor">
+                                        <tr>
+                                            <td><h:outputText value="#{louvor.nome}" /></td>
+                                            <td><h:outputText value="#{louvor.artista}" /></td>
+                                            <td><h:outputText value="#{louvor.tonalidade}" /></td>
+                                            <td><h:outputText value="#{louvor.andamento}" /></td>
+                                            <td>
+                                                <ui:repeat value="#{louvor.tipoLouvorEnum}" var="tipo" varStatus="status">
+                                                    <h:outputText value="#{tipo.descricao}" />
+                                                    <h:outputText value=" - " rendered="#{!status.last}" />
+                                                </ui:repeat>
+                                            </td>
+                                            <td><h:outputText value="#{louvor.ativo ? 'Ativo' : 'Inativo'}" /></td>
+                                            <td>
+                                                <h:outputLink value="#{louvor.linkVersao}" target="_blank">
+                                                    <h:outputText value="#{louvor.linkVersao}" />
+                                                </h:outputLink>
+                                            </td>
+                                            <td>
+                                                <h:commandLink action="#{louvorBean.editar(louvor.id)}"
+                                                               styleClass="waves-effect waves-light text-primary"
+                                                               title="Editar Louvor">
+                                                    <i class="fas fa-edit fa-lg"></i>
+                                                </h:commandLink>
+                                                <h:commandLink action="#{louvorBean.remover(louvor.id)}"
+                                                               styleClass="waves-effect waves-light text-danger"
+                                                               title="Deletar Louvor">
+                                                    <i class="fas fa-trash-alt fa-lg"></i>
+                                                </h:commandLink>
+                                            </td>
+                                        </tr>
+                                    </ui:repeat>
+                                    </tbody>
+                                </table>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+
+    <ui:define name="scripts">
+        <script src="#{request.contextPath}/js/scripts-lista-louvor.js"></script>
+    </ui:define>
+</ui:composition>
